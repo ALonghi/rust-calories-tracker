@@ -92,3 +92,17 @@ pub async fn delete(food_id: &String, collection: Collection<Document>) -> Resul
     collection.delete_one(filter, None).await?;
     Ok(())
 }
+
+pub async fn search_food_by_prefix(
+    prefix: &String,
+    collection: Collection<Document>,
+) -> Result<Vec<Food>> {
+    let regex_pattern = format!(".*{}.*", prefix);
+    debug!("Searching for regex pattern {}", &regex_pattern);
+    let filter = doc! { "name": { "$regex" : &regex_pattern }  };
+    let mut cursor = collection.find(filter, None).await.map_err(|_e| {
+        debug!("ERROR [search_food_by_prefix] {:?}", _e);
+        return FoodRepoError::NotFound;
+    })?;
+    return parse_foods(cursor).await;
+}

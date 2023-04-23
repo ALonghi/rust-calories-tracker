@@ -1,5 +1,5 @@
-import { IBoard, IBoardColumn } from "./board";
-import { ITask } from "./task";
+import Food, { NutritionalValue } from "@model/food";
+import { MealType } from "@model/meal";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -7,30 +7,19 @@ export interface ApiResponse<T> {
   error_message?: string;
 }
 
-export interface CreateTaskRequest {
-  title: string;
-  description?: string;
-  column_id?: IBoardColumn["id"];
-  above_task_id?: ITask["id"];
-  board_id: IBoard["id"];
+export interface CreateMealRequest {
+  food: Food;
+  meal_type: MealType;
+  meal_date: string;
 }
 
-export interface CreateBoardRequest {
-  title: string;
-  description?: string;
+export interface CreateFoodRequest {
+  name: string;
+  grams_qty: number;
+  calories_qty?: number;
+  nutritional_values: NutritionalValue[];
 }
 
-export interface CreateBoardColumnRequest {
-  title: string;
-  items: ITask[];
-  was_unassigned?: boolean;
+export interface SearchFoodRequest {
+  food_prefix: string;
 }
-
-export interface CreateBoardColumnResponse {
-  column: IBoardColumn;
-  items: ITask[];
-}
-
-export const EMPTY_BOARD_REQ: CreateBoardRequest = {
-  title: "",
-};

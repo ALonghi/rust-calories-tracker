@@ -9,12 +9,16 @@ export interface IToast {
   duration: number;
 }
 
-export const createToast = (details: string, type: ToastType) => {
+export const createToast = (
+  details: string,
+  type: ToastType,
+  duration?: number
+) => {
   const notification: IToast = {
     id: nanoid(16),
     details: details,
     type: type,
-    duration: type === "success" ? 3000 : 8000,
+    duration: duration || type === "success" ? 3000 : 8000,
   };
   return notification;
 };

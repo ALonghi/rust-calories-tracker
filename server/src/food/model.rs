@@ -14,6 +14,7 @@ pub struct NutritionalValue {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Food {
     pub id: uuid::Uuid,
+    pub name: String,
     pub grams_qty: f64,
     pub calories_qty: Option<i32>,
     pub nutritional_values: Vec<NutritionalValue>,
@@ -25,6 +26,7 @@ impl Food {
     pub fn from_create_request(r: CreateFoodRequest) -> Self {
         Self {
             id: uuid::Uuid::new_v4(),
+            name: r.name,
             grams_qty: r.grams_qty,
             calories_qty: r.calories_qty,
             nutritional_values: r.nutritional_values,

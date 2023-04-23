@@ -24,7 +24,7 @@ pub async fn parse_meals(
 
 pub fn doc_to_meal(doc: &bson::document::Document) -> Result<Meal> {
     let id = doc.get_str("id")?;
-    let foods: Vec<Food> = get_foods(doc);
+    let food: Food = doc_to_food(doc.get_document("food")?)?;
     let meal_type = doc.get_str("meal_type")?;
     let meal_date = doc.get_str("meal_date")?;
     let created_at = doc.get_datetime("created_at")?;
@@ -35,7 +35,7 @@ pub fn doc_to_meal(doc: &bson::document::Document) -> Result<Meal> {
     match Uuid::from_str(id) {
         Ok(meal_id) => Ok(Meal {
             id: meal_id,
-            foods,
+            food,
             meal_type: MealType::from_value(meal_type)?,
             meal_date: meal_date.to_string(),
             created_at: chrono::DateTime::from(created_at.clone()),
@@ -48,24 +48,10 @@ pub fn doc_to_meal(doc: &bson::document::Document) -> Result<Meal> {
     }
 }
 
-fn get_foods(doc: &bson::document::Document) -> Vec<Food> {
-    doc.get_array("foods")
-        .ok()
-        .unwrap_or(&Vec::new())
-        .into_iter()
-        .map(|entry| {
-            entry
-                .as_document()
-                .and_then(|d| doc_to_food(d).ok())
-                .unwrap()
-        })
-        .collect()
-}
-
 pub fn meal_to_doc(meal: &Meal) -> bson::document::Document {
     doc! {
         "id" : meal.id.clone().to_string(),
-        "foods" : meal.foods.iter().map(|f| food_to_doc(f)).collect::<Vec<_>>(),
+        "food" : food_to_doc(&meal.food),
         "meal_type" : meal.meal_type.to_string(),
         "meal_date" : meal.meal_date.clone(),
         "created_at" : <chrono::DateTime<Utc> as Into<bson::DateTime>>::into(meal.created_at.clone()),

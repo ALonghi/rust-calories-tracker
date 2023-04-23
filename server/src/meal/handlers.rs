@@ -5,7 +5,7 @@ use axum::Json;
 use tracing::{debug, error};
 
 use crate::config::AppState;
-use crate::dto::{CreateMealRequest, Response};
+use crate::dto::{CreateMealRequest, Response, SearchMealRequest};
 use crate::meal::model::Meal;
 use crate::meal::service as meal_service;
 
@@ -25,6 +25,44 @@ pub async fn get_meals_handler(State(state): State<AppState>) -> impl IntoRespon
         Err(e) => {
             let msg = format!(
                 "[get_meals_handler] Error getting all meals: {:?}",
+                e.to_string()
+            );
+            error!("{}", msg);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(Response {
+                    success: false,
+                    data: None,
+                    error_message: Some(msg),
+                }),
+            )
+        }
+    }
+}
+
+#[axum_macros::debug_handler]
+pub async fn search_meals_handler(
+    State(state): State<AppState>,
+    Json(req): Json<SearchMealRequest>,
+) -> impl IntoResponse {
+    debug!("searching meal with request {:?}", req.clone());
+    let fetch_meals = match &req.meal_date {
+        Some(date) => meal_service::get_meals_by_date(date, state.get_meals_collection()).await,
+        None => meal_service::get_all_meals(state.get_meals_collection()).await,
+    };
+    match fetch_meals {
+        Ok(meals) => (
+            StatusCode::OK,
+            Json(Response {
+                success: true,
+                data: Some(meals),
+                error_message: None,
+            }),
+        ),
+        Err(e) => {
+            let msg = format!(
+                "[search_meals_handler] Error searching meals with search req ({:?}): {:?}",
+                req.clone(),
                 e.to_string()
             );
             error!("{}", msg);

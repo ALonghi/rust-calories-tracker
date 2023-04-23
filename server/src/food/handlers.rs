@@ -5,7 +5,7 @@ use axum::Json;
 use tracing::{debug, error};
 
 use crate::config::AppState;
-use crate::dto::{CreateFoodRequest, Response};
+use crate::dto::{CreateFoodRequest, Response, SearchFoodRequest};
 use crate::food::model::Food;
 use crate::food::service as food_service;
 
@@ -171,6 +171,44 @@ pub async fn food_delete_handler(
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(Response {
                     success: true,
+                    data: None,
+                    error_message: Some(msg),
+                }),
+            )
+        }
+    }
+}
+
+#[axum_macros::debug_handler]
+pub async fn search_foods_handler(
+    State(state): State<AppState>,
+    Json(req): Json<SearchFoodRequest>,
+) -> impl IntoResponse {
+    debug!("Searching for meals with prefix {}", &req.food_prefix);
+    match food_service::search_food_by_prefix(&req.food_prefix, state.get_foods_collection()).await
+    {
+        Ok(foods) => {
+            debug!("Search found {:?} foods", &foods.len());
+            (
+                StatusCode::OK,
+                Json(Response {
+                    success: true,
+                    data: Some(foods),
+                    error_message: None,
+                }),
+            )
+        }
+        Err(e) => {
+            let msg = format!(
+                "[search_foods_handler] Error searching for foods with ({:?}): {:?}",
+                req.clone(),
+                e.to_string()
+            );
+            error!("{}", msg);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(Response {
+                    success: false,
                     data: None,
                     error_message: Some(msg),
                 }),

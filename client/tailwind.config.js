@@ -6,11 +6,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "theme-300": "#31D3AB",
-        "theme-400": "#25C8A1",
-        "theme-500": "#19BE98",
-        "theme-600": "#0CB38E",
-        "theme-700": "#00A884",
+        "themebg-300": "#3c3c50",
+        "themebg-400": "#2c3759",
+        "themebg-500": "#1A223EFF",
       },
     },
   },

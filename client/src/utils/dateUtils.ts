@@ -8,6 +8,10 @@ export default class DateUtils {
     return "";
   };
 
+  static getDateString = (date: Date) => {
+    return date.toISOString().split("T")[0];
+  };
+
   static isToday = (date: Date) => {
     const today = new Date();
     return DateUtils.areEqual(date, today);

@@ -24,17 +24,7 @@ pub async fn app(env_vars: EnvVars) -> Result<Router> {
     };
 
     let sensitive_headers: Arc<[_]> = vec![header::AUTHORIZATION, header::COOKIE].into();
-    let cors = CorsLayer::new()
-        // allow `GET` and `POST` when accessing the resource
-        .allow_methods(vec![
-            Method::GET,
-            Method::POST,
-            Method::PUT,
-            Method::DELETE,
-            Method::OPTIONS,
-        ])
-        // allow requests from any origin
-        .allow_origin(AllowOrigin::any());
+    let cors = CorsLayer::permissive();
 
     // Build our middleware stack
     let middleware = ServiceBuilder::new()

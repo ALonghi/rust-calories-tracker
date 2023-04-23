@@ -15,6 +15,7 @@ pub struct Response<T> {
 #[skip_serializing_none]
 #[derive(Deserialize, Debug, Clone)]
 pub struct CreateFoodRequest {
+    pub name: String,
     pub grams_qty: f64,
     pub calories_qty: Option<i32>,
     pub nutritional_values: Vec<NutritionalValue>,
@@ -23,7 +24,19 @@ pub struct CreateFoodRequest {
 #[skip_serializing_none]
 #[derive(Deserialize, Debug, Clone)]
 pub struct CreateMealRequest {
-    pub foods: Vec<Food>,
+    pub food: Food,
     pub meal_type: MealType,
     pub meal_date: String,
+}
+
+#[skip_serializing_none]
+#[derive(Deserialize, Debug, Clone)]
+pub struct SearchMealRequest {
+    pub meal_date: Option<String>,
+}
+
+#[skip_serializing_none]
+#[derive(Deserialize, Debug, Clone)]
+pub struct SearchFoodRequest {
+    pub food_prefix: String,
 }

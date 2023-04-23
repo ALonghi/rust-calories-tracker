@@ -1,6 +1,6 @@
-use axum::extract::FromRef;
 use std::str::FromStr;
 
+use axum::extract::FromRef;
 use chrono::Utc;
 use mongodb::bson::doc;
 // don't forget this!
@@ -22,6 +22,7 @@ pub async fn parse_foods(
 
 pub fn doc_to_food(doc: &bson::document::Document) -> Result<Food> {
     let id = doc.get_str("id")?;
+    let name = doc.get_str("name")?;
     let grams_qty = doc.get_f64("grams_qty")?;
     let calories_qty = doc.get_i32("calories_qty").ok();
     let nutritional_values = get_nutritional_values(doc);
@@ -33,6 +34,7 @@ pub fn doc_to_food(doc: &bson::document::Document) -> Result<Food> {
     match Uuid::from_str(id) {
         Ok(food_id) => Ok(Food {
             id: food_id,
+            name: String::from(name),
             grams_qty,
             calories_qty,
             nutritional_values,
@@ -79,6 +81,7 @@ fn get_nutritional_values(doc: &bson::document::Document) -> Vec<NutritionalValu
 pub fn food_to_doc(food: &Food) -> bson::document::Document {
     doc! {
         "id" : food.id.clone().to_string(),
+        "name" : food.name.clone(),
         "grams_qty" : food.grams_qty,
         "calories_qty" : food.calories_qty,
         "nutritional_values" : map_nutritional_values_to_docs(&food.nutritional_values),

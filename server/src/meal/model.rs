@@ -1,4 +1,5 @@
 use std::fmt;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -19,10 +20,10 @@ pub enum MealType {
 impl MealType {
     pub fn from_value(str: &str) -> Result<Self> {
         match str {
-            "breakfast" => Ok(MealType::Breakfast),
-            "lunch" => Ok(MealType::Lunch),
-            "dinner" => Ok(MealType::Dinner),
-            "snack" => Ok(MealType::Snack),
+            "Breakfast" => Ok(MealType::Breakfast),
+            "Lunch" => Ok(MealType::Lunch),
+            "Dinner" => Ok(MealType::Dinner),
+            "Snack" => Ok(MealType::Snack),
             _ => Err(AppError::from(InvalidMeal(String::from(
                 "MealType not within the enum values",
             )))),
@@ -33,10 +34,10 @@ impl MealType {
 impl fmt::Display for MealType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            MealType::Breakfast => write!(f, "breakfast"),
-            MealType::Lunch => write!(f, "lunch"),
-            MealType::Dinner => write!(f, "dinner"),
-            MealType::Snack => write!(f, "snack"),
+            MealType::Breakfast => write!(f, "{}", MealType::Breakfast),
+            MealType::Lunch => write!(f, "{}", MealType::Lunch),
+            MealType::Dinner => write!(f, "{}", MealType::Dinner),
+            MealType::Snack => write!(f, "{}", MealType::Snack),
         }
     }
 }
@@ -45,7 +46,7 @@ impl fmt::Display for MealType {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Meal {
     pub id: uuid::Uuid,
-    pub foods: Vec<Food>,
+    pub food: Food,
     pub meal_type: MealType,
     pub meal_date: String,
     // date string formatted yyyy-MM-dd
@@ -57,7 +58,7 @@ impl Meal {
     pub fn from_create_request(r: CreateMealRequest) -> Self {
         Self {
             id: uuid::Uuid::new_v4(),
-            foods: r.foods,
+            food: r.food,
             meal_type: r.meal_type,
             meal_date: r.meal_date,
             created_at: Utc::now(),

@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <div className="flex flex-row ">
         <Notifications />
-        <div className="sm:w-10/12 mx-auto">
+        <div className="w-full mx-auto">
           <Component {...pageProps} />
         </div>
       </div>
