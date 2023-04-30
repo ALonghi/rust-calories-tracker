@@ -6,7 +6,7 @@ use serde_with::skip_serializing_none;
 
 use crate::dto::CreateMealRequest;
 use crate::error::MealRepoError::InvalidMeal;
-use crate::error::{AppError, MealRepoError, Result};
+use crate::error::{AppError, Result};
 use crate::food::model::Food;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

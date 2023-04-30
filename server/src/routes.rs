@@ -7,8 +7,7 @@ use crate::food::handlers::{
     search_foods_handler,
 };
 use crate::meal::handlers::{
-    get_meals_handler, meal_create_handler, meal_delete_handler, meal_update_handler,
-    search_meals_handler,
+    meal_create_handler, meal_delete_handler, meal_update_handler, search_meals_handler,
 };
 
 pub fn get_routes() -> Router<AppState> {

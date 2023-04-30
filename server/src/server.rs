@@ -2,11 +2,11 @@ use std::{sync::Arc, time::Duration};
 
 use axum::{
     body::Bytes,
-    http::{header, HeaderValue, Method},
+    http::{header, HeaderValue},
     Router,
 };
 use tower::ServiceBuilder;
-use tower_http::cors::AllowOrigin;
+
 use tower_http::trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer};
 use tower_http::{cors::CorsLayer, timeout::TimeoutLayer};
 use tower_http::{LatencyUnit, ServiceBuilderExt};
