@@ -46,19 +46,25 @@ const AddMeal = ({ createMealFun }: AddMealType) => {
 
   const throttled = useRef(_.throttle((prefix) => searchFoods(prefix), 1000));
   useEffect(() => throttled.current(searchFoodName), [searchFoodName]);
-  const save = async () => {
+
+  const isFilledEnough = (): boolean =>
+    chosenMeal && newFoodData.name && newFoodData.grams_qty > 0;
+  const save = async (): Promise<void> => {
     try {
-      if (chosenMeal && newFoodData.name && newFoodData.grams_qty) {
+      if (isFilledEnough()) {
         const createdFood = await FoodService.createFood(newFoodData);
-        createMealFun(createdFood, chosenMeal).then(() => {
+        await createMealFun(createdFood, chosenMeal).then(() => {
           setChosenMeal(MealType.Breakfast);
           setShowPopup(false);
           setNewFoodData(getDefaultNewFood());
           setSearchFoodName(``);
         });
+        setShowPopup(false);
       }
-      setShowPopup(false);
-    } catch (e) {}
+      return Promise.resolve();
+    } catch (e) {
+      return Promise.reject<void>(e);
+    }
   };
 
   useCallback(() => {
@@ -163,7 +169,9 @@ const AddMeal = ({ createMealFun }: AddMealType) => {
                 {/*<button className={`rounded-md w-full bg-teal-700 text-gray-300 border-1 px-x py-2 mt-4`}>Add new property</button>*/}
               </div>
               <button
-                className={`py-2 w-full text-light bg-teal-600 text-white rounded-lg mt-8 sticky bottom-0`}
+                className={`py-2 w-full text-light bg-teal-600 text-white rounded-lg mt-8 sticky bottom-0
+                                disabled:bg-gray-500 disabled:text-gray-300 disabled:cursor-not-allowed`}
+                disabled={!isFilledEnough()}
                 onClick={() => save()}
               >
                 Save

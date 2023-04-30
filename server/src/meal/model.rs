@@ -3,13 +3,14 @@ use std::fmt;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
+use strum_macros::Display;
 
 use crate::dto::CreateMealRequest;
 use crate::error::MealRepoError::InvalidMeal;
 use crate::error::{AppError, Result};
 use crate::food::model::Food;
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, Display)]
 pub enum MealType {
     Breakfast,
     Lunch,
@@ -27,17 +28,6 @@ impl MealType {
             _ => Err(AppError::from(InvalidMeal(String::from(
                 "MealType not within the enum values",
             )))),
-        }
-    }
-}
-
-impl fmt::Display for MealType {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            MealType::Breakfast => write!(f, "{}", MealType::Breakfast),
-            MealType::Lunch => write!(f, "{}", MealType::Lunch),
-            MealType::Dinner => write!(f, "{}", MealType::Dinner),
-            MealType::Snack => write!(f, "{}", MealType::Snack),
         }
     }
 }

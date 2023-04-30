@@ -23,6 +23,7 @@ mod util;
 #[derive(Clone, Debug)]
 pub struct EnvVars {
     mongo_uri: String,
+    app_name: String,
 }
 
 #[tokio::main]
@@ -36,6 +37,7 @@ async fn main() {
 
     let env_vars = EnvVars {
         mongo_uri: std::env::var("MONGO_URI").expect("MONGO_URI environment variable must be set."),
+        app_name: std::env::var("APP_NAME").expect("APP_NAME environment variable must be set."),
     };
     // Parse command line arguments
     let config = Config::parse();
