@@ -10,11 +10,11 @@ import Food from "@model/food";
 import useSearchFood from "@hooks/meal/useSearchFood";
 import { motion } from "framer-motion";
 
-type EditMealPopupProps = {
+type SeachFoodPopupProps = {
   hidePopup: Function;
-  createMealFun: (food: Food, mealType: MealType) => Promise<void>;
+  afterSaveFun: (food: Food, mealType: MealType) => Promise<void>;
 };
-const EditMealPopup = ({ hidePopup, createMealFun }: EditMealPopupProps) => {
+const SeachFoodPopup = ({ hidePopup, afterSaveFun }: SeachFoodPopupProps) => {
   const {
     foundFoods,
     chosenFood,
@@ -28,12 +28,13 @@ const EditMealPopup = ({ hidePopup, createMealFun }: EditMealPopupProps) => {
 
   return (
     <motion.div
+      className={`w-full`}
       initial={{ opacity: 0, y: 25 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
       <div className={`flex flex-col items-start justify-start flex-1 w-full `}>
-        <p className={`text-white text-sm `}>Select meal </p>
+        <p className={`text-white text-sm `}>Select meal type </p>
         <SelectBox
           options={Object.values(MealType).map((t) => _.capitalize(t))}
           selected={_.capitalize(mealType)}
@@ -41,7 +42,7 @@ const EditMealPopup = ({ hidePopup, createMealFun }: EditMealPopupProps) => {
           classes={`py-2 w-full`}
         />
       </div>
-      <div className={`w-full min-h-60 relative`}>
+      <div className={`w-full min-h-60 relative mt-4 `}>
         <InputForm
           label={"Search by food name"}
           type={"text"}
@@ -80,16 +81,16 @@ const EditMealPopup = ({ hidePopup, createMealFun }: EditMealPopupProps) => {
         placeholder={"100"}
         value={grams}
         updateValue={(value) => setGrams(() => Number(value))}
-        componentClasses={` w-full`}
+        componentClasses={` w-full mt-5`}
         fullWidth
       />
 
       <Button
-        clickAction={() => createMealFun(chosenFood, mealType)}
+        clickAction={() => afterSaveFun(chosenFood, mealType)}
         isDisabled={!hasRequiredFieldsFilled}
       />
     </motion.div>
   );
 };
 
-export default EditMealPopup;
+export default SeachFoodPopup;

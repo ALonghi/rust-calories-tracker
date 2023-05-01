@@ -8,12 +8,13 @@ import DateUtils from "@utils/dateUtils";
 import { CreateMealRequest } from "@model/dto";
 
 const useMealsData = (setLoading: (val: boolean) => void) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [focusDate, setFocusDate] = useState<Date>(new Date());
   const [currentMeals, setCurrentMeals] = useState<Meal[]>([]);
+  const [focusedMeal, setFocusedMeal] = useState<Meal | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    MealService.getMealsForDate(selectedDate)
+    MealService.getMealsForDate(focusDate)
       .then((meals) => setCurrentMeals(meals))
       .catch((e) => {
         const toast = createToast(
@@ -23,23 +24,27 @@ const useMealsData = (setLoading: (val: boolean) => void) => {
         addNotification(toast);
       })
       .finally(() => setLoading(false));
-  }, [selectedDate]);
+  }, [focusDate]);
 
   const dayBefore = () => {
-    const yesterday = new Date(selectedDate.getTime());
-    yesterday.setDate(selectedDate.getDate() - 1);
-    setSelectedDate(yesterday);
+    const yesterday = new Date(focusDate.getTime());
+    yesterday.setDate(focusDate.getDate() - 1);
+    setFocusDate(yesterday);
   };
   const dayAfter = () => {
-    const tomorrow = new Date(selectedDate.getTime());
-    tomorrow.setDate(selectedDate.getDate() + 1);
-    setSelectedDate(tomorrow);
+    const tomorrow = new Date(focusDate.getTime());
+    tomorrow.setDate(focusDate.getDate() + 1);
+    setFocusDate(tomorrow);
   };
 
-  const addMeal = (food: Food, chosenMeal: MealType): Promise<void> =>
+  const addMeal = (
+    food: Food,
+    chosenMeal: MealType,
+    mealDate: Date
+  ): Promise<void> =>
     MealService.createMeal({
       meal_type: chosenMeal,
-      meal_date: DateUtils.getDateString(selectedDate),
+      meal_date: DateUtils.getDateString(mealDate),
       food: food,
     } satisfies CreateMealRequest)
       .then((meal) => {
@@ -56,12 +61,14 @@ const useMealsData = (setLoading: (val: boolean) => void) => {
       });
 
   return {
-    selectedDate,
-    setSelectedDate,
+    selectedDate: focusDate,
+    setSelectedDate: setFocusDate,
     currentMeals,
     dayBefore,
     dayAfter,
     addMeal,
+    focusedMeal,
+    setFocusedMeal,
   };
 };
 

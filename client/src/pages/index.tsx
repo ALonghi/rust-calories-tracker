@@ -3,8 +3,9 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import DateUtils from "@utils/dateUtils";
 import StickyList from "@components/StickyList";
-import AddMeal from "@components/AddMeal";
+import MealPopup from "@components/MealPopup";
 import useMealsData from "@hooks/meal/useMealsData";
+import FoodDataForm from "@components/meal/FoodDataForm";
 
 const IndexPage: NextPage = () => {
   const [isLoading, setLoading] = useState(false);
@@ -16,6 +17,8 @@ const IndexPage: NextPage = () => {
     dayBefore,
     dayAfter,
     addMeal,
+    focusedMeal,
+    setFocusedMeal,
   } = useMealsData((val) => setLoading(val));
 
   if (isLoading) return <p className={`my-12 text-white`}>Loading...</p>;
@@ -36,7 +39,7 @@ const IndexPage: NextPage = () => {
 
       {!DateUtils.isToday(selectedDate) && (
         <p
-          className={`text-center text-gray-600 text-sm mt-2 underline`}
+          className={`text-center text-gray-600 text-sm mt-4 underline`}
           onClick={() => setSelectedDate(new Date())}
         >
           Back to today
@@ -44,7 +47,10 @@ const IndexPage: NextPage = () => {
       )}
 
       <StickyList meals={currentMeals} />
-      <AddMeal createMealFun={addMeal} mealDate={selectedDate} />
+      {focusedMeal &&
+        // <FoodDataForm foodData={focusedMeal?.food} setFoodData={setFocusedMeal} />
+        null}
+      <MealPopup afterSaveFun={addMeal} mealDate={selectedDate} />
     </main>
   );
 };
