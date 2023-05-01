@@ -20,13 +20,8 @@ export default class DateUtils {
 
   static isToday = (date: Date) => {
     const today = new Date();
-    return DateUtils.areEqual(date, today);
+    return DateUtils.areDatesEqual(date, today);
   };
-
-  static areEqual = (date1: Date, date2: Date) =>
-    date1.getUTCFullYear() === date2.getUTCFullYear() &&
-    date1.getUTCMonth() === date2.getUTCMonth() &&
-    date1.getUTCDay() === date2.getUTCDay();
 
   static getMonthName = (monthNumber: number): string => {
     const date = new Date();
@@ -73,7 +68,6 @@ export default class DateUtils {
       const loopDate = new Date(year, month, i);
       dates.push({
         date: loopDate,
-        isSelected: false,
         isToday: loopDate === today,
       } satisfies Day);
     }
@@ -86,7 +80,6 @@ export default class DateUtils {
           const loopDate = new Date(year, month, prevMonthDate.getDate() - i);
           dates.splice(daysFromMonday - i, 0, {
             date: loopDate,
-            isSelected: false,
             isToday: false,
           });
         }
@@ -94,4 +87,14 @@ export default class DateUtils {
     }
     return dates;
   };
+
+  static areDatesEqual = (date1: Date, date2: Date): boolean =>
+    date1.getDate() === date2.getDate() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getFullYear() === date2.getFullYear();
+
+  static areEqual = (date1: Day, date2: Day): boolean =>
+    date1.date.getDate() === date2.date.getDate() &&
+    date1.date.getMonth() === date2.date.getMonth() &&
+    date1.date.getFullYear() === date2.date.getFullYear();
 }

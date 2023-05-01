@@ -1,17 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Food from "@model/food";
 import { MealType } from "@model/meal";
 
 const useEditMealData = (chosenFood: Food | null) => {
   const [grams, setGrams] = useState<number>(0);
   const [mealType, setMealType] = useState<MealType | null>(MealType.Breakfast);
+  const isValid = () => grams > 0 && !!chosenFood;
+  const [hasRequiredFields, setHasRequiredFields] = useState<boolean>(
+    isValid()
+  );
 
-  const hasRequiredFieldsFilled: boolean = grams > 0 && !!chosenFood;
+  useEffect(() => {
+    setHasRequiredFields(isValid());
+  }, [chosenFood, grams]);
 
   return {
     grams,
     setGrams,
-    hasRequiredFieldsFilled,
+    hasRequiredFields,
     mealType,
     setMealType,
   };

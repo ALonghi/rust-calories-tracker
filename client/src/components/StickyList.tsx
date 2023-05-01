@@ -22,7 +22,7 @@ export default function StickyList({ meals }: StickyListProps) {
         {types.map((type) => (
           <div
             key={type}
-            className="relative w-11/12 mx-auto flex flex-col mb-0 bg-themebg-400 rounded-lg "
+            className="relative w-11/12 mx-auto flex flex-col mb-6 bg-themebg-400 rounded-lg "
           >
             <div
               className="sticky top-0 z-10 border-b border-t border-themebg-500 text-gray-300

@@ -1,15 +1,16 @@
 import type { NextPage } from "next";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import React from "react";
 import DateUtils from "@utils/dateUtils";
 import StickyList from "@components/StickyList";
 import MealPopup from "@components/MealPopup";
 import useMealsData from "@hooks/meal/useMealsData";
+import Spinner from "@components/shared/Spinner";
 
 const IndexPage: NextPage = () => {
-  const [isLoading, setLoading] = useState(false);
-
   const {
+    isLoading,
+    setLoading,
     selectedDate,
     setSelectedDate,
     currentMeals,
@@ -18,9 +19,9 @@ const IndexPage: NextPage = () => {
     addMeal,
     focusedMeal,
     setFocusedMeal,
-  } = useMealsData((val) => setLoading(val));
+  } = useMealsData();
 
-  if (isLoading) return <p className={`my-12 text-white`}>Loading...</p>;
+  if (isLoading) return <Spinner classes={`mt-12 mx-auto`} />;
 
   return (
     <main className={`flex mx-auto justify-center flex-col mx-4 relative`}>

@@ -7,7 +7,8 @@ import Food from "@model/food";
 import DateUtils from "@utils/dateUtils";
 import { CreateMealRequest } from "@model/dto";
 
-const useMealsData = (setLoading: (val: boolean) => void) => {
+const useMealsData = () => {
+  const [isLoading, setLoading] = useState(true);
   const [focusDate, setFocusDate] = useState<Date>(new Date());
   const [currentMeals, setCurrentMeals] = useState<Meal[]>([]);
   const [focusedMeal, setFocusedMeal] = useState<Meal | null>(null);
@@ -61,6 +62,8 @@ const useMealsData = (setLoading: (val: boolean) => void) => {
       });
 
   return {
+    isLoading,
+    setLoading,
     selectedDate: focusDate,
     setSelectedDate: setFocusDate,
     currentMeals,

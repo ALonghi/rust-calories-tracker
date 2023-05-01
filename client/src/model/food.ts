@@ -29,3 +29,8 @@ export const getDefaultNewFood = () => {
   };
   return newFood;
 };
+
+export interface FoodGrouped {
+  initial: string;
+  items: Food[];
+}

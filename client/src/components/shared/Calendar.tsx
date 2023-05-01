@@ -31,7 +31,16 @@ const Calendar = ({ selectedDate, afterUpdateDateFun }: CalendarProps) => {
 
   return (
     <>
-      {showPicker ? (
+      <div
+        className={`bg-themebg-400 w-fit max-w-full flex justify-evenly items-center mx-auto
+                    rounded-lg py-1 px-6 gap-x-6 cursor-pointer`}
+        onClick={() => setShowPicker(true)}
+      >
+        <CalendarDaysIcon className={`text-gray-400 w-5`} />
+        <p className={`text-gray-300`}>{selectedDay.date.toDateString()}</p>
+        {!showPicker && <PencilIcon className={`text-gray-400 w-4`} />}
+      </div>
+      {showPicker && (
         <div className="my-4 text-center w-full ">
           <div className="flex items-center text-gray-300">
             <button
@@ -76,7 +85,7 @@ const Calendar = ({ selectedDate, afterUpdateDateFun }: CalendarProps) => {
           >
             <div
               className="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-themebg-500 text-sm
-                            px-3 py-1 shadow ring-1 ring-gray-200"
+                            px-3 py-1 shadow ring-1 ring-gray-200 text-white font-extralight"
             >
               {days.map((day, dayIdx) => (
                 <button
@@ -84,17 +93,20 @@ const Calendar = ({ selectedDate, afterUpdateDateFun }: CalendarProps) => {
                   type="button"
                   className={Utils.classNames(
                     "py-1.5 hover:bg-themebg-400 focus:z-10",
-                    (day.isSelected || day.isToday) && "font-semibold",
-                    day.isSelected && "text-white",
-                    !day.isSelected &&
+                    (DateUtils.areEqual(selectedDay, day) || day.isToday) &&
+                      "font-bold",
+                    DateUtils.areEqual(selectedDay, day) && "text-white",
+                    !DateUtils.areEqual(selectedDay, day) &&
                       isCurrentMonth(day) &&
                       !isToday(day) &&
                       "text-gray-100",
-                    !day.isSelected &&
+                    !DateUtils.areEqual(selectedDay, day) &&
                       !isCurrentMonth(day) &&
                       !day.isToday &&
-                      "text-gray-500",
-                    day.isToday && !day.isSelected && "text-indigo-600",
+                      "text-gray-400",
+                    day.isToday &&
+                      !DateUtils.areEqual(selectedDay, day) &&
+                      "text-indigo-600",
                     dayIdx === 0 && "rounded-tl-lg",
                     dayIdx === 6 && "rounded-tr-lg",
                     dayIdx === days.length - 7 && "rounded-bl-lg",
@@ -110,8 +122,7 @@ const Calendar = ({ selectedDate, afterUpdateDateFun }: CalendarProps) => {
                     dateTime={DateUtils.getDateString(day.date)}
                     className={Utils.classNames(
                       "mx-auto flex h-7 w-7 items-center justify-center rounded-full",
-                      day.isSelected && day.isToday && "bg-indigo-600",
-                      day.isSelected && !day.isToday && "bg-gray-900"
+                      DateUtils.areEqual(selectedDay, day) && "bg-indigo-600"
                     )}
                   >
                     {DateUtils.getDateString(day.date)
@@ -123,16 +134,6 @@ const Calendar = ({ selectedDate, afterUpdateDateFun }: CalendarProps) => {
               ))}
             </div>
           </motion.section>
-        </div>
-      ) : (
-        <div
-          className={`bg-themebg-400 w-fit max-w-full flex justify-evenly items-center mx-auto
-                    rounded-lg py-1 px-6 gap-x-6 cursor-pointer`}
-          onClick={() => setShowPicker(true)}
-        >
-          <CalendarDaysIcon className={`text-gray-400 w-5`} />
-          <p className={`text-gray-300`}>{selectedDay.date.toDateString()}</p>
-          <PencilIcon className={`text-gray-400 w-4`} />
         </div>
       )}
     </>

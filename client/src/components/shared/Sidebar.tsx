@@ -84,9 +84,9 @@ export default function Sidebar() {
                 </div>
                 <div className="mt-8 h-0 flex-1 overflow-y-auto">
                   <nav className="space-y-2 px-6">
-                    {navigation.map((item) => (
+                    {navigation.map((item, i) => (
                       <a
-                        key={item.name}
+                        key={i}
                         href={item.href}
                         className={Utils.classNames(
                           router.pathname === item.href
@@ -115,7 +115,6 @@ export default function Sidebar() {
           className="px-4 text-gray-500 focus:outline-none
                     focus:ring-0 lg:hidden"
           onClick={() => {
-            console.log(`clicked!!`);
             setSidebarOpen(true);
           }}
         >
@@ -138,8 +137,9 @@ export default function Sidebar() {
           </div>
           <div className="mt-4 pt-4 flex flex-1 flex-col">
             <nav className="flex-1 space-y-1 px-4 pb-4">
-              {navigation.map((item) => (
+              {navigation.map((item, i) => (
                 <Link
+                  key={i}
                   href={item.href}
                   className={Utils.classNames(
                     router.pathname === item.href

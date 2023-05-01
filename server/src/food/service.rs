@@ -98,9 +98,16 @@ pub async fn search_food_by_prefix(
     collection: Collection<Document>,
 ) -> Result<Vec<Food>> {
     let regex_pattern = format!(".*{}.*", prefix);
-    debug!("Searching for regex pattern {}", &regex_pattern);
-    let filter = doc! { "name": { "$regex" : &regex_pattern }  };
-    let cursor = collection.find(filter, None).await.map_err(|_e| {
+    let regex = bson::Regex {
+        pattern: regex_pattern,
+        options: String::from("i"),
+    }; // case Insensitive
+    debug!("Searching foods with text {}", &prefix);
+    let pipeline = vec![
+        doc! { "$match": { "name": { "$regex" : regex }  } },
+        doc! { "$sort": { "name": 1} },
+    ];
+    let cursor = collection.aggregate(pipeline, None).await.map_err(|_e| {
         debug!("ERROR [search_food_by_prefix] {:?}", _e);
         return FoodRepoError::NotFound;
     })?;

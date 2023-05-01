@@ -1,4 +1,4 @@
-import InputForm from "@components/shared/InputForm";
+import InputForm from "@components/shared/Form/InputForm";
 import React from "react";
 import { CreateFoodRequest } from "@model/dto";
 import Food from "@model/food";
@@ -29,6 +29,17 @@ const FoodDataForm = ({ foodData, setFoodData }: AddMealPopup) => {
         value={foodData.grams_qty}
         updateValue={(value) =>
           setFoodData((d) => ({ ...d, grams_qty: Number(value) }))
+        }
+        fullWidth
+      />
+      <InputForm
+        type={"number"}
+        name={"calories"}
+        label="Calories"
+        placeholder={"300"}
+        value={foodData.calories_qty}
+        updateValue={(value) =>
+          setFoodData((d) => ({ ...d, calories_qty: Number(value) }))
         }
         fullWidth
       />

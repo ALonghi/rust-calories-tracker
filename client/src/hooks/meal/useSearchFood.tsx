@@ -8,7 +8,6 @@ import _ from "lodash";
 const useSearchFood = () => {
   const [foundFoods, setFoundFoods] = useState<Food[]>([]);
   const [searchFoodName, setSearchFoodName] = useState<string>(``);
-  const [chosenFood, setChosenFood] = useState<Food | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const searchFoods = (searchPrefix: string) => {
     if (searchPrefix) {
@@ -36,8 +35,6 @@ const useSearchFood = () => {
 
   return {
     foundFoods,
-    chosenFood,
-    setChosenFood,
     searchFoodName,
     setSearchFoodName,
     isSearching,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Modal from "@components/shared/Modal";
+import Modal from "@components/shared/Form/Modal";
 import { MealType } from "@model/meal";
 import Food from "@model/food";
 import AddButton from "@components/shared/Buttons/AddButton";

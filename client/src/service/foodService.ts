@@ -24,6 +24,24 @@ export default class FoodService {
     }
   }
 
+  static async getAll(): Promise<Food[]> {
+    try {
+      Logger.info(`Getting all foods..`);
+      const response = (await axios
+        .get(`/foods`)
+        .then((res) => res.data)) as ApiResponse<Food[]>;
+      if (!response.success || !response.data)
+        throw new Error(response.error_message);
+      Logger.info(
+        `Getting all foods returned ${response.data?.length} items..`
+      );
+      return response.data;
+    } catch (e) {
+      Logger.error(`Error in getting all foods: ${e.message || e}`);
+      return Promise.reject(e);
+    }
+  }
+
   static async searchFoodByPrefix(prefix: string): Promise<Food[]> {
     try {
       Logger.info(`Searching foods by prefix ${prefix}..`);

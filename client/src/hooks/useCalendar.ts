@@ -13,7 +13,6 @@ const useCalendar = (selectedDate: Date) => {
   );
   const [selectedDay, setSelectedDay] = useState<Day>({
     date: selectedDate,
-    isSelected: true,
     isToday: true,
   } satisfies Day);
   const [days, setDays] = useState<Day[]>(
