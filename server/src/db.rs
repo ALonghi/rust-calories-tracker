@@ -11,10 +11,9 @@ pub struct DB {
 
 impl DB {
     pub async fn init(env_vars: EnvVars) -> Result<Self> {
-        let app_name = String::from("rust-calories-tracker");
-        let mut client_options = ClientOptions::parse(format!(
+        let client_options = ClientOptions::parse(format!(
             "{}?retryWrites=true&w=majority&appname={}",
-            env_vars.mongo_uri, app_name
+            env_vars.mongo_uri, env_vars.app_name
         ))
         .await?;
         Ok(Self {

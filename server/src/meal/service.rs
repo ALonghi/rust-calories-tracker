@@ -56,7 +56,7 @@ pub async fn get_meals_by_date(
     date: &String,
     collection: Collection<Document>,
 ) -> Result<Vec<Meal>> {
-    let filter = doc! { "date": date };
+    let filter = doc! { "meal_date": date };
     let cursor = collection.find(filter, None).await.map_err(|_e| {
         debug!("ERROR [get_meals_by_date] {:?}", _e);
         return MealRepoError::NotFound;
