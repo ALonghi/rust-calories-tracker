@@ -24,7 +24,7 @@ const AddMeal = ({ createMealFun }: AddMealType) => {
       <Modal
         open={showPopup}
         setOpen={() => setShowPopup(false)}
-        classes={`h-[90vh] `}
+        classes={`h-[85vh] `}
       >
         <p className={`text-md text-white mt-2 text-center`}>Add meal</p>
         <div

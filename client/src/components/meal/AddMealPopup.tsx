@@ -5,6 +5,7 @@ import Button from "@components/shared/Buttons/Button";
 import { CreateFoodRequest } from "@model/dto";
 import Food, { getDefaultNewFood } from "@model/food";
 import FoodService from "@service/foodService";
+import { motion } from "framer-motion";
 
 type AddMealPopup = {
   hidePopup: Function;
@@ -32,7 +33,11 @@ const AddMealPopup = ({ hidePopup, createMealFun }: AddMealPopup) => {
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 25 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <div className={`w-full overflow-y-scroll `}>
         <InputForm
           type={"text"}
@@ -82,11 +87,12 @@ const AddMealPopup = ({ hidePopup, createMealFun }: AddMealPopup) => {
             fullWidth
           />
         ))}
-
-        {/*<button className={`rounded-md w-full bg-teal-700 text-gray-300 border-1 px-x py-2 mt-4`}>Add new property</button>*/}
       </div>
-      <Button clickAction={() => null} isDisabled={!hasRequiredFieldsFilled} />
-    </>
+      <Button
+        clickAction={() => save()}
+        isDisabled={!hasRequiredFieldsFilled}
+      />
+    </motion.div>
   );
 };
 

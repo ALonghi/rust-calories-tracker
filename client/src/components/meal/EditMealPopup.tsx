@@ -8,6 +8,7 @@ import useEditMealData from "@hooks/meal/useEditMealData";
 import _ from "lodash";
 import Food from "@model/food";
 import useSearchFood from "@hooks/meal/useSearchFood";
+import { motion } from "framer-motion";
 
 type EditMealPopupProps = {
   hidePopup: Function;
@@ -26,7 +27,11 @@ const EditMealPopup = ({ hidePopup, createMealFun }: EditMealPopupProps) => {
     useEditMealData(chosenFood);
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 25 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <div className={`flex flex-col items-start justify-start flex-1 w-full `}>
         <p className={`text-white text-sm `}>Select meal </p>
         <SelectBox
@@ -80,10 +85,10 @@ const EditMealPopup = ({ hidePopup, createMealFun }: EditMealPopupProps) => {
       />
 
       <Button
-        clickAction={() => hidePopup()}
+        clickAction={() => createMealFun(chosenFood, mealType)}
         isDisabled={!hasRequiredFieldsFilled}
       />
-    </>
+    </motion.div>
   );
 };
 
