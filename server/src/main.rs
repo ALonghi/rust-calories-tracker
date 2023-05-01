@@ -46,7 +46,7 @@ async fn main() {
     let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, config.port));
     info!("listening on {}", addr);
 
-    let app = app(env_vars).await.unwrap();
+    let app = app(&env_vars).await.unwrap();
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await

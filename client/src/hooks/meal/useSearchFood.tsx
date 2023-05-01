@@ -25,7 +25,7 @@ const useSearchFood = () => {
   };
 
   const throttled = useRef(
-    _.throttle((prefix) => searchFoods(prefix), 1000, { trailing: false })
+    _.throttle((prefix) => searchFoods(prefix), 1000, { trailing: true })
   );
   useEffect(() => throttled.current(searchFoodName), [searchFoodName]);
 

@@ -13,13 +13,12 @@ pub struct Config {
 #[derive(Clone, Debug)]
 pub struct AppState {
     pub client: Client,
+    pub app_name: String,
 }
-
-const DB_NAME: &str = "rust-kanban-board";
 
 impl AppState {
     pub fn get_database(&self) -> Database {
-        self.client.database(DB_NAME)
+        self.client.database(&self.app_name)
     }
 
     pub fn get_meals_collection(&self) -> Collection<Document> {

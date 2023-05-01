@@ -17,10 +17,11 @@ use crate::error::Result;
 use crate::routes::get_routes;
 use crate::EnvVars;
 
-pub async fn app(env_vars: EnvVars) -> Result<Router> {
+pub async fn app(env_vars: &EnvVars) -> Result<Router> {
     // Build our database for holding the key/value pairs
     let state = AppState {
         client: DB::init(env_vars).await?.client,
+        app_name: env_vars.app_name.clone(),
     };
 
     let sensitive_headers: Arc<[_]> = vec![header::AUTHORIZATION, header::COOKIE].into();

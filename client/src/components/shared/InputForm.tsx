@@ -32,7 +32,7 @@ const InputForm: React.FC<InputFormProps> = (props) => {
           className={`bg-themebg-400 shadow-md  focus:outline-none
           border-none shadow-none rounded-md 
             focus:border-2 focus:border-themebg-300 w-full 
-          text-white block pl-3 pr-10 py-2 my-3
+          text-white block pl-3 pr-10 py-2 my-3 placeholder:text-gray-600
              ${
                props.fullWidth ? `w-full` : `w-max`
              } sm:text-sm border-gray-400 rounded-md ${Utils.classNames(
