@@ -1,7 +1,8 @@
 import { instance as axios } from "../utils/axios";
 import Logger from "../utils/logging";
 import { ApiResponse, CreateMealRequest } from "@model/dto";
-import Meal, { MealType } from "@model/meal";
+import Meal from "@model/meal";
+import DateUtils from "@utils/dateUtils";
 
 export default class MealService {
   static async createMeal(meal: CreateMealRequest): Promise<Meal> {
@@ -121,7 +122,7 @@ export default class MealService {
       // ]) satisfies Promise<Meal[]>;
       Logger.info(`Getting meals for date ..`);
       const response = (await axios
-        .post(`/meals/search`, { meal_date: date.toLocaleDateString() })
+        .post(`/meals/search`, { meal_date: DateUtils.getDateString(date) })
         .then((res) => res.data)) as ApiResponse<Meal[]>;
       if (!response.success || !response.data)
         throw new Error(response.error_message);
