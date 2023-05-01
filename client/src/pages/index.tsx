@@ -5,7 +5,6 @@ import DateUtils from "@utils/dateUtils";
 import StickyList from "@components/StickyList";
 import MealPopup from "@components/MealPopup";
 import useMealsData from "@hooks/meal/useMealsData";
-import FoodDataForm from "@components/meal/FoodDataForm";
 
 const IndexPage: NextPage = () => {
   const [isLoading, setLoading] = useState(false);

@@ -9,8 +9,10 @@ const useSearchFood = () => {
   const [foundFoods, setFoundFoods] = useState<Food[]>([]);
   const [searchFoodName, setSearchFoodName] = useState<string>(``);
   const [chosenFood, setChosenFood] = useState<Food | null>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const searchFoods = (searchPrefix: string) => {
     if (searchPrefix) {
+      setIsSearching(true);
       FoodService.searchFoodByPrefix(searchPrefix)
         .then((res) => setFoundFoods(res))
         .catch((e) => {
@@ -20,7 +22,10 @@ const useSearchFood = () => {
             1000
           );
           addNotification(toast);
-        });
+        })
+        .finally(() => setIsSearching(false));
+    } else {
+      setFoundFoods(() => []);
     }
   };
 
@@ -35,6 +40,7 @@ const useSearchFood = () => {
     setChosenFood,
     searchFoodName,
     setSearchFoodName,
+    isSearching,
   };
 };
 

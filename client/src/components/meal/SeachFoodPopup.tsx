@@ -9,6 +9,7 @@ import _ from "lodash";
 import Food from "@model/food";
 import useSearchFood from "@hooks/meal/useSearchFood";
 import { motion } from "framer-motion";
+import Spinner from "@components/shared/Spinner";
 
 type SeachFoodPopupProps = {
   hidePopup: Function;
@@ -21,6 +22,7 @@ const SeachFoodPopup = ({ hidePopup, afterSaveFun }: SeachFoodPopupProps) => {
     setChosenFood,
     searchFoodName,
     setSearchFoodName,
+    isSearching,
   } = useSearchFood();
 
   const { grams, setGrams, hasRequiredFieldsFilled, mealType, setMealType } =
@@ -43,19 +45,32 @@ const SeachFoodPopup = ({ hidePopup, afterSaveFun }: SeachFoodPopupProps) => {
         />
       </div>
       <div className={`w-full min-h-60 relative mt-4 `}>
-        <InputForm
-          label={"Search by food name"}
-          type={"text"}
-          name={"existingFoodName"}
-          placeholder={"Rice"}
-          value={searchFoodName}
-          inputClasses={`!w-full`}
-          componentClasses={`w-full`}
-          updateValue={(value) => setSearchFoodName(() => value?.toString())}
-        />
+        <p className="block text-sm font-medium text-gray-200">
+          Search for existing food
+        </p>
+        <div
+          className={`bg-themebg-400 shadow-md  focus:outline-none
+          border-none shadow-none rounded-md flex flex-row justify-start items-center flex-nowrap
+            focus:border-2 focus:border-themebg-300 w-full 
+          text-white block my-3 placeholder:text-gray-600
+              sm:text-sm border-gray-400 rounded-md`}
+        >
+          <input
+            type={"text"}
+            name={"existingFoodName"}
+            id={"existingFoodName"}
+            value={searchFoodName}
+            className={`bg-transparent focus:outline-none
+          border-none shadow-none w-full text-white block px-4 py-2
+          placeholder:text-gray-600 sm:text-sm border-gray-400`}
+            placeholder={"Rice, pasta, etc."}
+            onChange={(e) => setSearchFoodName(e.target.value)}
+          />
+          {isSearching && <Spinner size={20} classes={`mr-2`} />}
+        </div>
         {foundFoods?.length > 0 && !chosenFood && (
           <div
-            className=" z-10 mt-1 max-h-40 w-full overflow-auto
+            className=" z-10 mt-1 max-h-40 w-full overflow-auto max-h-40
                             rounded-md bg-themebg-400  py-1 text-base shadow-lg ring-1 ring-black
                             ring-opacity-5 focus:outline-none sm:text-sm border border-themebg-400 "
           >
