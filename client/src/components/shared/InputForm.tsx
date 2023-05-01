@@ -10,6 +10,7 @@ interface InputFormProps {
   inputClasses?: string;
   componentClasses?: string;
   fullWidth?: boolean;
+  enableAutocomplete?: boolean;
 }
 
 const InputForm: React.FC<InputFormProps> = (props) => {
@@ -44,6 +45,7 @@ const InputForm: React.FC<InputFormProps> = (props) => {
               ? props.updateValue(e.target.value)
               : props.updateValue(e.target.valueAsNumber)
           }
+          autoComplete={props.enableAutocomplete ? "on" : "off"}
         />
       </div>
     </div>
