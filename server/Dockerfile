@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/app/target \
     rustup install nightly; \
     cargo build --release; \
     # Compress debug symbols, squeezing the size just a bit more
-    objcopy --compress-debug-sections target/release/kanban-board-backend ./server
+    objcopy --compress-debug-sections target/release/rust-calories-tracker ./server
 
 # Stage two - we'll utilize a second container to run our built binary from our first container - slim containers!
 FROM debian:bullseye-slim as deploy
@@ -38,8 +38,8 @@ RUN set -eux; \
     apt autoremove -y; \
     rm -rf /var/lib/{apt,dpkg,cache,log}/;
 
-ARG MONGO_URI
 ENV MONGO_URI=${MONGO_URI}
+ENV APP_NAME=rust-calories-tracker
 ENV RUST_BACKTRACE=1
 
 # Let's work from a self contained directory for all of our deployment needs
@@ -49,7 +49,7 @@ WORKDIR /deploy
 COPY --from=build /app/server ./
 
 # Let's expose port 80 as we'll need fly's internal port mapping also assumes 80
-EXPOSE 80
+EXPOSE 8080
 
 # Finally, boot up the API
 CMD ["./server"]

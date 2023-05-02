@@ -16,4 +16,9 @@ export default class Utils {
   static formatAmount = (amount: number): string =>
     // @ts-ignore
     amount ? parseFloat(amount.toFixed(2)).toLocaleString(`it-IT`) : "0";
+
+  static uniqueArrayElements = (array: string[]) => {
+    const onlyUnique = (value, index, self) => self.indexOf(value) === index;
+    return array.filter(onlyUnique);
+  };
 }

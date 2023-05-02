@@ -17,9 +17,9 @@ export default interface Food {
 
 export const getDefaultNewFood = () => {
   const default_nutritional_values: NutritionalValue[] = [
-    { key: "Proteins", value: 0 },
-    { key: "Carbs", value: 0 },
-    { key: "Fats", value: 0 },
+    { key: "Proteins", value: 0.0 },
+    { key: "Carbs", value: 0.0 },
+    { key: "Fats", value: 0.0 },
   ];
 
   const newFood: CreateFoodRequest = {
@@ -29,3 +29,8 @@ export const getDefaultNewFood = () => {
   };
   return newFood;
 };
+
+export interface FoodGrouped {
+  initial: string;
+  items: Food[];
+}

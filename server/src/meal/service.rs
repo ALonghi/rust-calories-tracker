@@ -11,7 +11,7 @@ use crate::meal::model::Meal;
 use super::mapper::doc_to_meal;
 
 pub async fn get_all_meals(collection: Collection<Document>) -> Result<Vec<Meal>> {
-    let mut cursor = collection.find(None, None).await.map_err(|_e| {
+    let cursor = collection.find(None, None).await.map_err(|_e| {
         debug!("ERROR [get_all_meals] {:?}", _e);
         return MealRepoError::NotFound;
     })?;
@@ -56,8 +56,8 @@ pub async fn get_meals_by_date(
     date: &String,
     collection: Collection<Document>,
 ) -> Result<Vec<Meal>> {
-    let filter = doc! { "date": date };
-    let mut cursor = collection.find(filter, None).await.map_err(|_e| {
+    let filter = doc! { "meal_date": date };
+    let cursor = collection.find(filter, None).await.map_err(|_e| {
         debug!("ERROR [get_meals_by_date] {:?}", _e);
         return MealRepoError::NotFound;
     })?;

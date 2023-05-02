@@ -1,67 +1,27 @@
 import type { NextPage } from "next";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import DateUtils from "@utils/dateUtils";
-import Meal, { MealType } from "@model/meal";
 import StickyList from "@components/StickyList";
-import MealService from "@service/mealService";
-import { createToast } from "@model/toast";
-import { addNotification } from "@stores/notificationStore";
-import AddMeal from "@components/AddMeal";
-import Food from "@model/food";
-import { CreateMealRequest } from "@model/dto";
+import MealPopup from "@components/MealPopup";
+import useMealsData from "@hooks/meal/useMealsData";
+import Spinner from "@components/shared/Spinner";
 
 const IndexPage: NextPage = () => {
-  // const [movements, setMovements] = useState<Movement[]>([])
-  const [isLoading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [currentMeals, setCurrentMeals] = useState<Meal[]>([]);
+  const {
+    isLoading,
+    setLoading,
+    selectedDate,
+    setSelectedDate,
+    currentMeals,
+    dayBefore,
+    dayAfter,
+    addMeal,
+    focusedMeal,
+    setFocusedMeal,
+  } = useMealsData();
 
-  useEffect(() => {
-    setLoading(true);
-    MealService.getMealsForDate(selectedDate)
-      .then((meals) => setCurrentMeals(meals))
-      .catch((e) => {
-        const toast = createToast(
-          `Error in fetching meals: ${e.message || e}`,
-          "error"
-        );
-        addNotification(toast);
-      })
-      .finally(() => setLoading(false));
-  }, [selectedDate]);
-
-  const dayBefore = () => {
-    const yesterday = new Date(selectedDate.getTime());
-    yesterday.setDate(selectedDate.getDate() - 1);
-    setSelectedDate(yesterday);
-  };
-  const dayAfter = () => {
-    const tomorrow = new Date(selectedDate.getTime());
-    tomorrow.setDate(selectedDate.getDate() + 1);
-    setSelectedDate(tomorrow);
-  };
-
-  const addMeal = (food: Food, chosenMeal: MealType): Promise<void> =>
-    MealService.createMeal({
-      meal_type: chosenMeal,
-      meal_date: DateUtils.getDateString(selectedDate),
-      food: food,
-    } satisfies CreateMealRequest)
-      .then((meal) => {
-        setCurrentMeals((p) => [...p, meal]);
-        const toast = createToast("Meal created successfully", "success");
-        addNotification(toast);
-      })
-      .catch((e) => {
-        const toast = createToast(
-          `Error in creating meal: ${e.message || e}`,
-          "error"
-        );
-        addNotification(toast);
-      });
-
-  if (isLoading) return <p className={`my-12 text-white`}>Loading...</p>;
+  if (isLoading) return <Spinner classes={`mt-12 mx-auto`} />;
 
   return (
     <main className={`flex mx-auto justify-center flex-col mx-4 relative`}>
@@ -79,7 +39,7 @@ const IndexPage: NextPage = () => {
 
       {!DateUtils.isToday(selectedDate) && (
         <p
-          className={`text-center text-gray-600 text-sm mt-2 underline`}
+          className={`text-center text-gray-600 text-sm mt-4 underline`}
           onClick={() => setSelectedDate(new Date())}
         >
           Back to today
@@ -87,7 +47,10 @@ const IndexPage: NextPage = () => {
       )}
 
       <StickyList meals={currentMeals} />
-      <AddMeal createMealFun={addMeal} />
+      {focusedMeal &&
+        // <FoodDataForm foodData={focusedMeal?.food} setFoodData={setFocusedMeal} />
+        null}
+      <MealPopup afterSaveFun={addMeal} mealDate={selectedDate} />
     </main>
   );
 };

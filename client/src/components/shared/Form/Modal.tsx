@@ -30,7 +30,7 @@ export default function Modal({ children, open, setOpen, classes }) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className={`relative transform rounded-lg bg-themebg-500 px-4 pt-5 pb-4
+                className={`relative transform rounded-lg bg-themebg-500 px-4 pt-5 pb-4 overflow-y-auto
               text-left shadow-xl transition-all sm:my-8 w-full sm:w-full sm:max-w-sm sm:p-6 ${
                 classes || ``
               }`}

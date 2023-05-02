@@ -1,6 +1,7 @@
 extern crate core;
 
-use std::net::{Ipv4Addr, SocketAddr};
+use std::net::SocketAddr;
+use std::str::FromStr;
 
 use clap::Parser;
 use dotenv::dotenv;
@@ -23,6 +24,7 @@ mod util;
 #[derive(Clone, Debug)]
 pub struct EnvVars {
     mongo_uri: String,
+    app_name: String,
 }
 
 #[tokio::main]
@@ -36,15 +38,16 @@ async fn main() {
 
     let env_vars = EnvVars {
         mongo_uri: std::env::var("MONGO_URI").expect("MONGO_URI environment variable must be set."),
+        app_name: std::env::var("APP_NAME").expect("APP_NAME environment variable must be set."),
     };
     // Parse command line arguments
     let config = Config::parse();
 
     // Run our service
-    let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, config.port));
+    let addr = SocketAddr::from_str(format!("[::]:{}", config.port).as_str()).unwrap();
     info!("listening on {}", addr);
 
-    let app = app(env_vars).await.unwrap();
+    let app = app(&env_vars).await.unwrap();
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
