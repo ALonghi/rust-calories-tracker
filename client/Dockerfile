@@ -58,8 +58,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/postcss.config.js ./
 COPY --from=builder --chown=nextjs:nodejs /app/.env ./
 
 # Environment variables must be redefined at run time
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-RUN echo "runner NEXT_PUBLIC_API_URL was set to=${NEXT_PUBLIC_API_URL}"
 
 # Uncomment the following line to disable telemetry at run time
 ENV NEXT_TELEMETRY_DISABLED 1

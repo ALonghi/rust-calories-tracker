@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: "16"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: "./app/"
+          cache-dependency-path: "./client/"
       - name: Restore cache
         uses: actions/cache@v3
         with:
@@ -49,18 +49,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
-        working-directory: ./app
+        working-directory: ./client
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
-        working-directory: ./app
+        working-directory: ./client
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
   build_be:
     name: Build rust backend
     runs-on: ubuntu-latest
-    working-directory: ./server
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - run: cargo build --release --all-features
+      - run: cd server && cargo build --release --all-features
