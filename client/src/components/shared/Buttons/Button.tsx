@@ -2,9 +2,10 @@ import React from "react";
 
 type ButtonProps = {
   clickAction: Function;
+  text: string;
   isDisabled?: boolean;
 };
-const Button = ({ clickAction, isDisabled }: ButtonProps) => {
+const Button = ({ clickAction, text, isDisabled }: ButtonProps) => {
   return (
     <button
       className={`py-2 w-full text-light bg-teal-600 text-white rounded-lg mt-8 sticky bottom-0
@@ -12,7 +13,7 @@ const Button = ({ clickAction, isDisabled }: ButtonProps) => {
       disabled={isDisabled || false}
       onClick={() => clickAction()}
     >
-      Save
+      {text}
     </button>
   );
 };

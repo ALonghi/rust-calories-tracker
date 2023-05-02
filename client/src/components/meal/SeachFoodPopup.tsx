@@ -54,6 +54,7 @@ const SeachFoodPopup = ({ hidePopup, afterSaveFun }: SeachFoodPopupProps) => {
           afterSaveFun(chosenFood, mealType).then(() => hidePopup());
         }}
         isDisabled={!hasRequiredFields}
+        text={`Save`}
       />
     </motion.div>
   );

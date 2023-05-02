@@ -15,7 +15,11 @@ interface InputFormProps {
 
 const InputForm: React.FC<InputFormProps> = (props) => {
   return (
-    <div className={`${Utils.classNames(props.componentClasses)}`}>
+    <div
+      className={`${Utils.classNames(props.componentClasses)} ${
+        props.fullWidth ? `w-full` : `w-max`
+      }`}
+    >
       {props.label && (
         <label
           htmlFor={props.name}

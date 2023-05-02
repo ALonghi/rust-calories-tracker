@@ -2,10 +2,29 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 
-export default function Modal({ children, open, setOpen, classes }) {
+type ModalProps = {
+  children: JSX.Element;
+  open: boolean;
+  setOpen?: (value: boolean) => void;
+  classes?: string;
+  withoutOverlay?: boolean;
+  bgClass?: string;
+};
+export default function Modal({
+  children,
+  open,
+  setOpen,
+  classes,
+  withoutOverlay,
+  bgClass,
+}: ModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        onClose={setOpen ? () => setOpen(false) : () => {}}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -15,7 +34,11 @@ export default function Modal({ children, open, setOpen, classes }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity" />
+          {!withoutOverlay ? (
+            <div className="fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity" />
+          ) : (
+            <div />
+          )}
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -30,15 +53,19 @@ export default function Modal({ children, open, setOpen, classes }) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className={`relative transform rounded-lg bg-themebg-500 px-4 pt-5 pb-4 overflow-y-auto
+                className={`relative transform rounded-lg ${
+                  bgClass || `bg-themebg-500`
+                } px-4 pt-5 pb-4 overflow-y-auto
               text-left shadow-xl transition-all sm:my-8 w-full sm:w-full sm:max-w-sm sm:p-6 ${
                 classes || ``
               }`}
               >
-                <XMarkIcon
-                  className="absolute w-5 h-5 text-gray-400 top-5 right-5 cursor-pointer"
-                  onClick={() => setOpen(false)}
-                />
+                {setOpen && (
+                  <XMarkIcon
+                    className="absolute w-5 h-5 text-gray-400 top-5 right-5 cursor-pointer"
+                    onClick={() => (setOpen ? setOpen(false) : null)}
+                  />
+                )}
                 {children}
               </Dialog.Panel>
             </Transition.Child>

@@ -46,6 +46,7 @@ const AddMealPopup = ({ hidePopup, afterSaveFun }: AddFoodPopup) => {
       <Button
         clickAction={() => save()}
         isDisabled={!hasRequiredFieldsFilled}
+        text={`Save`}
       />
     </motion.div>
   );

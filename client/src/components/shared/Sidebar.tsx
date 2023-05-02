@@ -82,7 +82,7 @@ export default function Sidebar() {
                   />
                   <p className="text-white ml-4 ">Calories Tracker</p>
                 </div>
-                <div className="mt-8 h-0 flex-1 overflow-y-auto">
+                <div className="mt-8 h-0 flex-1 overflow-y-auto relative">
                   <nav className="space-y-2 px-6">
                     {navigation.map((item, i) => (
                       <a
@@ -103,6 +103,20 @@ export default function Sidebar() {
                       </a>
                     ))}
                   </nav>
+                  <Link href={`/login`} onClick={() => setSidebarOpen(false)}>
+                    <p
+                      className={`mt-10 text-gray-200 ml-8 cursor-pointer mb-4 `}
+                    >
+                      Log in
+                    </p>
+                  </Link>
+                  <div className={`absolute bottom-5 w-full`}>
+                    {process.env.NEXT_PUBLIC_APP_VERSION && (
+                      <p className={` text-gray-600 mx-auto w-fit `}>
+                        version {process.env.NEXT_PUBLIC_APP_VERSION}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
