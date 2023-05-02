@@ -38,7 +38,7 @@ RUN set -eux; \
     apt autoremove -y; \
     rm -rf /var/lib/{apt,dpkg,cache,log}/;
 
-ENV MONGO_URI=$MONGO_URI
+ENV MONGO_URI=${MONGO_URI}
 ENV APP_NAME=rust-calories-tracker
 ENV RUST_BACKTRACE=1
 
@@ -47,10 +47,9 @@ WORKDIR /deploy
 
 # We need the artifact from the build container, so let's grab it
 COPY --from=build /app/server ./
-COPY --from=build /app/.env ./
 
 # Let's expose port 80 as we'll need fly's internal port mapping also assumes 80
-EXPOSE 80
+EXPOSE 8080
 
 # Finally, boot up the API
 CMD ["./server"]
