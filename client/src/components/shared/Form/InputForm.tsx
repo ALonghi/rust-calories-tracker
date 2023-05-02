@@ -1,4 +1,6 @@
 import Utils from "@utils/utils";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
 interface InputFormProps {
   label?: string;
@@ -13,7 +15,17 @@ interface InputFormProps {
   enableAutocomplete?: boolean;
 }
 
+const inputClasses = `bg-themebg-400 shadow-md 
+          border-none shadow-none rounded-md w-full
+             focus:border-2 focus:outline-none focus:border-themebg-300 py-2 my-3`;
+
+const eyeProps = (fun: Function) => ({
+  onClick: () => fun(),
+  className: `w-auto h-6 mr-4 ml-auto cursor-pointer`,
+});
 const InputForm: React.FC<InputFormProps> = (props) => {
+  const [showInput, setShowInput] = useState<boolean>(false);
+
   return (
     <div
       className={`${Utils.classNames(props.componentClasses)} ${
@@ -28,16 +40,20 @@ const InputForm: React.FC<InputFormProps> = (props) => {
           {props.label}
         </label>
       )}
-      <div className={``}>
+      <div
+        className={`flex flex-row justify-between items-center w-full 
+      ${props.type === `password` ? inputClasses : ``}`}
+      >
         <input
-          type={props.type}
+          type={showInput ? `text` : props.type}
           name={props.name}
           id={props.name}
           value={props.value}
-          className={`bg-themebg-400 shadow-md  focus:outline-none
-          border-none shadow-none rounded-md 
-            focus:border-2 focus:border-themebg-300 w-full 
-          text-white block pl-3 pr-10 py-2 my-3 placeholder:text-gray-600
+          className={`${
+            props.type !== `password` ? inputClasses : `bg-transparent`
+          }
+                    focus:outline-none  focus:border-themebg-300
+          text-white block placeholder:text-gray-600 pl-3 pr-6
              ${
                props.fullWidth ? `w-full` : `w-max`
              } sm:text-sm border-gray-400 rounded-md ${Utils.classNames(
@@ -51,6 +67,12 @@ const InputForm: React.FC<InputFormProps> = (props) => {
           }
           autoComplete={props.enableAutocomplete ? "on" : "off"}
         />
+        {props.type === `password` &&
+          (showInput ? (
+            <EyeSlashIcon {...eyeProps(() => setShowInput(false))} />
+          ) : (
+            <EyeIcon {...eyeProps(() => setShowInput(true))} />
+          ))}
       </div>
     </div>
   );
