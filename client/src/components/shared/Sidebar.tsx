@@ -15,6 +15,8 @@ const navigation = [
   { name: "Foods", href: "/foods", icon: ListBulletIcon },
 ];
 
+const protectedPages = [`/login`, `/signup`];
+
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const router = useRouter();
@@ -84,24 +86,25 @@ export default function Sidebar() {
                 </div>
                 <div className="mt-8 h-0 flex-1 overflow-y-auto relative">
                   <nav className="space-y-2 px-6">
-                    {navigation.map((item, i) => (
-                      <a
-                        key={i}
-                        href={item.href}
-                        className={Utils.classNames(
-                          router.pathname === item.href
-                            ? "bg-theme-700 text-white"
-                            : "text-blue-100 hover:bg-theme-700",
-                          "group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                        )}
-                      >
-                        <item.icon
-                          className="mr-4 h-6 w-6 flex-shrink-0 text-theme-200"
-                          aria-hidden="true"
-                        />
-                        {item.name}
-                      </a>
-                    ))}
+                    {!protectedPages.includes(router.pathname) &&
+                      navigation.map((item, i) => (
+                        <a
+                          key={i}
+                          href={item.href}
+                          className={Utils.classNames(
+                            router.pathname === item.href
+                              ? "bg-theme-700 text-white"
+                              : "text-blue-100 hover:bg-theme-700",
+                            "group flex items-center px-2 py-2 text-base font-medium rounded-md"
+                          )}
+                        >
+                          <item.icon
+                            className="mr-4 h-6 w-6 flex-shrink-0 text-theme-200"
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </a>
+                      ))}
                   </nav>
                   <Link href={`/login`} onClick={() => setSidebarOpen(false)}>
                     <p
@@ -124,18 +127,20 @@ export default function Sidebar() {
         </Dialog>
       </Transition.Root>
 
-      <div className="fixed top-0 left-0 flex h-16 w-16 z-10 ">
-        <button
-          className="px-4 text-gray-500 focus:outline-none
+      {!protectedPages.includes(router.pathname) && (
+        <div className="fixed top-0 left-0 flex h-16 w-16 z-10 ">
+          <button
+            className="px-4 text-gray-500 focus:outline-none
                     focus:ring-0 lg:hidden"
-          onClick={() => {
-            setSidebarOpen(true);
-          }}
-        >
-          <span className="sr-only">Open sidebar</span>
-          <Bars3BottomLeftIcon className="h-6 w-6" aria-hidden="true" />
-        </button>
-      </div>
+            onClick={() => {
+              setSidebarOpen(true);
+            }}
+          >
+            <span className="sr-only">Open sidebar</span>
+            <Bars3BottomLeftIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
+      )}
 
       {/* Static sidebar for desktop */}
       <div className="hidden fixed md:relative h-[100vh] md:flex md:w-60 md:flex-col">
@@ -151,26 +156,27 @@ export default function Sidebar() {
           </div>
           <div className="mt-4 pt-4 flex flex-1 flex-col">
             <nav className="flex-1 space-y-1 px-4 pb-4">
-              {navigation.map((item, i) => (
-                <Link
-                  key={i}
-                  href={item.href}
-                  className={Utils.classNames(
-                    router.pathname === item.href
-                      ? "bg-themebg-500 text-white"
-                      : "text-blue-100 hover:bg-theme-600",
-                    "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-                  )}
-                >
-                  <item.icon
-                    className="ml-3 mr-3 h-6 w-6 flex-shrink-0 text-theme-300"
-                    aria-hidden="true"
-                  />
-                  <p className={`font-light text-base text-white`}>
-                    {item.name}
-                  </p>
-                </Link>
-              ))}
+              {!protectedPages.includes(router.pathname) &&
+                navigation.map((item, i) => (
+                  <Link
+                    key={i}
+                    href={item.href}
+                    className={Utils.classNames(
+                      router.pathname === item.href
+                        ? "bg-themebg-500 text-white"
+                        : "text-blue-100 hover:bg-theme-600",
+                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                    )}
+                  >
+                    <item.icon
+                      className="ml-3 mr-3 h-6 w-6 flex-shrink-0 text-theme-300"
+                      aria-hidden="true"
+                    />
+                    <p className={`font-light text-base text-white`}>
+                      {item.name}
+                    </p>
+                  </Link>
+                ))}
             </nav>
           </div>
           {process.env.NEXT_PUBLIC_APP_VERSION && (
