@@ -6,7 +6,7 @@ use mongodb::{Client, Collection, Database};
 #[derive(Debug, Parser)]
 pub struct Config {
     /// The port to listen on
-    #[clap(short = 'p', long, default_value = "8080")]
+    #[clap(short = 'p', long, default_value = "80")]
     pub port: u16,
 }
 

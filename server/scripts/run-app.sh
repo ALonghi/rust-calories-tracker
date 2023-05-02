@@ -1,12 +1,13 @@
 #!/bin/sh
 
-echo "Setting up mongodb container.."
-docker network create my-mongo-cluster
-docker run \
--p 27017:27017 \
---name mongo1 \
---net my-mongo-cluster \
-mongo mongod --replSet my-mongo-set
+echo "Deleting previous version if it exists"
+docker rm $(docker ps -q --filter ancestor=calories-tracker-be )
 
-echo "Launching Rust application.."
-cargo run
+echo "Building container"
+docker build -t calories-tracker-be:latest .
+
+echo "Running container.."
+CONTAINER_ID=$(docker run -d --env-file=.env -p 80:80 --name calories-tracker-be calories-tracker-be)
+
+echo "Reading container logs.."
+docker logs "$CONTAINER_ID"

@@ -12,7 +12,7 @@ pub struct DB {
 impl DB {
     pub async fn init(env_vars: &EnvVars) -> Result<Self> {
         let client_options = ClientOptions::parse(format!(
-            "{}?retryWrites=true&w=majority&appname={}",
+            "{}/?retryWrites=true&w=majority&appname={}",
             env_vars.mongo_uri, env_vars.app_name
         ))
         .await?;
