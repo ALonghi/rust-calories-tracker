@@ -16,13 +16,12 @@ RUN \
   else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
   fi
 
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-RUN echo "NEXT_PUBLIC_API_URL was set to=${NEXT_PUBLIC_API_URL}"
 COPY src ./src
 COPY next.config.js .
 COPY tsconfig.json .
 COPY tailwind.config.js .
 COPY postcss.config.js .
+COPY .env .
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
@@ -56,10 +55,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/tailwind.config.js ./
 COPY --from=builder --chown=nextjs:nodejs /app/postcss.config.js ./
+COPY --from=builder --chown=nextjs:nodejs /app/.env ./
 
 # Environment variables must be redefined at run time
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-RUN echo "NEXT_PUBLIC_API_URL was set to=${NEXT_PUBLIC_API_URL}"
+RUN echo "runner NEXT_PUBLIC_API_URL was set to=${NEXT_PUBLIC_API_URL}"
 
 # Uncomment the following line to disable telemetry at run time
 ENV NEXT_TELEMETRY_DISABLED 1

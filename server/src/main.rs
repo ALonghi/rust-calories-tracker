@@ -1,6 +1,7 @@
 extern crate core;
 
-use std::net::{Ipv4Addr, SocketAddr};
+use std::net::SocketAddr;
+use std::str::FromStr;
 
 use clap::Parser;
 use dotenv::dotenv;
@@ -43,7 +44,7 @@ async fn main() {
     let config = Config::parse();
 
     // Run our service
-    let addr = SocketAddr::from((Ipv4Addr::UNSPECIFIED, config.port));
+    let addr = SocketAddr::from_str(format!("[::]:{}", config.port).as_str()).unwrap();
     info!("listening on {}", addr);
 
     let app = app(&env_vars).await.unwrap();
