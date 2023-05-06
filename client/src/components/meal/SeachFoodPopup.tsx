@@ -7,7 +7,7 @@ import useEditMealData from "@hooks/meal/useEditMealData";
 import _ from "lodash";
 import Food from "@model/food";
 import { motion } from "framer-motion";
-import SearchFood from "@components/food/SearchFood";
+import SearchFoodForm from "@components/food/SearchFoodForm";
 
 type SeachFoodPopupProps = {
   hidePopup: Function;
@@ -36,7 +36,7 @@ const SeachFoodPopup = ({ hidePopup, afterSaveFun }: SeachFoodPopupProps) => {
         />
       </div>
 
-      <SearchFood chosenFood={chosenFood} setChosenFood={setChosenFood} />
+      <SearchFoodForm chosenFood={chosenFood} setChosenFood={setChosenFood} />
 
       <InputForm
         type={"number"}

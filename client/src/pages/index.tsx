@@ -1,11 +1,19 @@
 import type { NextPage } from "next";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ClipboardDocumentListIcon,
+  QrCodeIcon,
+} from "@heroicons/react/24/outline";
+import React, { useState } from "react";
 import DateUtils from "@utils/dateUtils";
 import StickyList from "@components/StickyList";
 import MealPopup from "@components/MealPopup";
 import useMealsData from "@hooks/meal/useMealsData";
 import Spinner from "@components/shared/Spinner";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import AddButton from "@components/shared/Buttons/AddButton";
+import ScannerPopup from "@components/food/ScannerPopup";
 
 const IndexPage: NextPage = () => {
   const {
@@ -20,6 +28,10 @@ const IndexPage: NextPage = () => {
     focusedMeal,
     setFocusedMeal,
   } = useMealsData();
+
+  const [showActions, setShowActions] = useState<boolean>(false);
+  const [showManualAddPopup, setShowManualAddPopup] = useState<boolean>(false);
+  const [showBarcodePopup, setShowBarcodePopup] = useState<boolean>(false);
 
   if (isLoading) return <Spinner classes={`mt-12 mx-auto`} />;
 
@@ -50,7 +62,49 @@ const IndexPage: NextPage = () => {
       {focusedMeal &&
         // <FoodDataForm foodData={focusedMeal?.food} setFoodData={setFocusedMeal} />
         null}
-      <MealPopup afterSaveFun={addMeal} mealDate={selectedDate} />
+      <MealPopup
+        showPopup={showManualAddPopup}
+        closePopup={() => setShowManualAddPopup(false)}
+        afterSaveFun={addMeal}
+        mealDate={selectedDate}
+      />
+      {showBarcodePopup && (
+        <ScannerPopup
+          isOpen={showBarcodePopup}
+          closePopup={() => setShowBarcodePopup(false)}
+        />
+      )}
+
+      <div className={`fixed bottom-5 right-0 h-[7rem] w-[10rem]`}>
+        {showActions && (
+          <div
+            className={`flex flex-row -rotate-45 items-center mr-auto -ml-1 `}
+          >
+            <QrCodeIcon
+              onClick={() => {
+                setShowBarcodePopup(true);
+                setShowActions(false);
+              }}
+              className={`rotate-45 font-light cursor-pointer w-11 mr-auto bg-white rounded-full p-2`}
+            />
+            <ClipboardDocumentListIcon
+              onClick={() => {
+                setShowManualAddPopup(true);
+                setShowActions(false);
+              }}
+              className={`rotate-45 font-light  cursor-pointer w-11 mr-auto bg-white rounded-full p-2`}
+            />
+          </div>
+        )}
+        {showActions ? (
+          <XMarkIcon
+            onClick={() => setShowActions(false)}
+            className={`w-11 p-2 bg-teal-600 rounded-full fixed bottom-7 right-7 text-white`}
+          />
+        ) : (
+          <AddButton action={() => setShowActions(true)} />
+        )}
+      </div>
     </main>
   );
 };

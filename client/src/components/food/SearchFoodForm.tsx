@@ -11,7 +11,7 @@ type SearchFoodProps = {
   setChosenFood: Dispatch<SetStateAction<Food>>;
   classes?: string;
 };
-const SearchFood = ({
+const SearchFoodForm = ({
   chosenFood,
   setChosenFood,
   classes,
@@ -83,4 +83,4 @@ const SearchFood = ({
   );
 };
 
-export default SearchFood;
+export default SearchFoodForm;

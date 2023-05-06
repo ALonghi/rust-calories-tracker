@@ -67,15 +67,17 @@ const NotificationToast: React.VFC<NotificationToastProps> = ({
                     </p>
                   </div>
                   <div className="ml-4 flex-shrink-0 flex">
-                    <button
-                      className=" rounded-md inline-flex text-black-900-400 hover:text-black-900-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => {
-                        deleteNotification(notification.id);
-                      }}
-                    >
-                      <span className="sr-only">Chiudi</span>
-                      <XMarkIcon className="h-5 w-5" aria-hidden="true" />
-                    </button>
+                    {!notification.nonClosable && (
+                      <button
+                        className=" rounded-md inline-flex text-black-900-400 hover:text-black-900-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        onClick={() => {
+                          deleteNotification(notification.id);
+                        }}
+                      >
+                        <span className="sr-only">Chiudi</span>
+                        <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Modal from "@components/shared/Form/Modal";
 import { MealType } from "@model/meal";
 import Food from "@model/food";
-import AddButton from "@components/shared/Buttons/AddButton";
 import SeachFoodPopup from "@components/meal/SeachFoodPopup";
 import AddMealPopup from "@components/meal/AddFoodPopup";
 import Calendar from "@components/shared/Calendar";
@@ -14,14 +13,20 @@ type MealPopupType = {
     mealDate: Date
   ) => Promise<void>;
   mealDate: Date;
+  showPopup: boolean;
+  closePopup: Function;
 };
-const MealPopup = ({ afterSaveFun, mealDate }: MealPopupType) => {
-  const [showPopup, setShowPopup] = useState<boolean>(false);
+const MealPopup = ({
+  afterSaveFun,
+  mealDate,
+  showPopup,
+  closePopup,
+}: MealPopupType) => {
   const [addingChoice, setAddingChoice] = useState<`saved` | `new`>(`saved`);
   const [currentMealDate, setCurrentMealDate] = useState<Date>(mealDate);
 
   const sharedProps = {
-    hidePopup: () => setShowPopup(false),
+    hidePopup: () => closePopup(),
     afterSaveFun: (food: Food, mealType: MealType) =>
       afterSaveFun(food, mealType, currentMealDate),
     mealDate: currentMealDate,
@@ -30,7 +35,7 @@ const MealPopup = ({ afterSaveFun, mealDate }: MealPopupType) => {
     <div className={``}>
       <Modal
         open={showPopup}
-        setOpen={() => setShowPopup(false)}
+        setOpen={() => closePopup()}
         classes={`max-h-[85vh] `}
       >
         <div className={`max-h-full overflow-y-auto`}>
@@ -74,7 +79,6 @@ const MealPopup = ({ afterSaveFun, mealDate }: MealPopupType) => {
           </div>
         </div>
       </Modal>
-      <AddButton action={() => setShowPopup(true)} />
     </div>
   );
 };

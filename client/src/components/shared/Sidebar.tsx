@@ -180,7 +180,7 @@ export default function Sidebar() {
             </nav>
           </div>
           {process.env.NEXT_PUBLIC_APP_VERSION && (
-            <p className={`text-center text-theme-300 mb-4`}>
+            <p className={`text-center text-themebg-300 mb-4`}>
               version {process.env.NEXT_PUBLIC_APP_VERSION}
             </p>
           )}

@@ -33,7 +33,7 @@ const Calendar = ({ selectedDate, afterUpdateDateFun }: CalendarProps) => {
     <>
       <div
         className={`bg-themebg-400 w-fit max-w-full flex justify-evenly items-center mx-auto
-                    rounded-lg py-1 px-6 gap-x-6 cursor-pointer`}
+                    rounded-lg py-2 px-6 gap-x-6 cursor-pointer`}
         onClick={() => setShowPicker(true)}
       >
         <CalendarDaysIcon className={`text-gray-400 w-5`} />
