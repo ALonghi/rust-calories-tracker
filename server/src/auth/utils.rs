@@ -25,7 +25,7 @@ fn create_jwt_token(jwt_secret: &String, user_id: &Uuid) -> Result<String> {
     );
     token
         .and_then(|t| Ok(t))
-        .map_err(|e| AuthError(String::from("Error in creating auth token")))
+        .map_err(|e| AuthError(format!("Error in creating auth token: {}", e)))
 }
 
 pub fn get_response_with_token(

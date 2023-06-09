@@ -10,12 +10,11 @@ use axum::{
 };
 use axum_extra::extract::cookie::CookieJar;
 use jsonwebtoken::{decode, DecodingKey, Validation};
-use tower_http::follow_redirect::policy::PolicyExt;
 
-use crate::auth::model::LoginUserSchema;
-use crate::auth::model::TokenClaims;
+use crate::auth::model::{LoginUserSchema, TokenClaims};
+
 use crate::auth::service::search_by_email;
-use crate::auth::utils::get_response_with_token;
+
 use crate::config::AppState;
 use crate::dto::Response;
 use crate::error::{AppError, UserRepoError};
@@ -27,7 +26,7 @@ pub async fn auth<B>(
     mut req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<Response<String>>)> {
-    let token = cookie_jar
+    let token_opt = cookie_jar
         .get("token")
         .map(|cookie| cookie.value().to_string())
         .or_else(|| {
@@ -42,45 +41,45 @@ pub async fn auth<B>(
                     }
                 })
         });
-    //
-    // let token = token.ok_or_else(|| {
-    //     let json_error = Response::<String>::from_err(&String::from(
-    //         "You are not logged in, please provide token",
-    //     ));
-    //     (StatusCode::UNAUTHORIZED, Json(json_error))
-    // })?;
-    //
-    // let claims = decode::<TokenClaims>(
-    //     &token,
-    //     &DecodingKey::from_secret(state.jwt_secret.as_ref()),
-    //     &Validation::default(),
-    // )
-    // .map_err(|_| {
-    //     let json_error = Response::from_err(&String::from("Invalid token"));
-    //     (StatusCode::UNAUTHORIZED, Json(json_error))
-    // })?
-    // .claims;
-    //
-    // let user_id = uuid::Uuid::parse_str(&claims.sub).map_err(|_| {
-    //     let json_error = Response::from_err(&String::from("Invalid token"));
-    //     (StatusCode::UNAUTHORIZED, Json(json_error))
-    // })?;
-    //
-    // let user = get_user_by_id(&user_id.to_string(), state.get_users_collection()) // todo:
-    //     .await
-    //     .map_err(|e| {
-    //         let json_error = Response::from_err(&String::from("Error fetching user from database"));
-    //         (StatusCode::INTERNAL_SERVER_ERROR, Json(json_error))
-    //     })?;
-    //
-    // let user = user.ok_or_else(|| {
-    //     let json_error = Response::from_err(&String::from(
-    //         "The user belonging to this token no longer exists",
-    //     ));
-    //     (StatusCode::UNAUTHORIZED, Json(json_error))
-    // })?;
-    //
-    // req.extensions_mut().insert(user);
+
+    let token = token_opt.ok_or_else(|| {
+        let json_error = Response::<String>::from_err(&String::from(
+            "You are not logged in, please provide token",
+        ));
+        (StatusCode::UNAUTHORIZED, Json(json_error))
+    })?;
+
+    let claims = decode::<TokenClaims>(
+        &token,
+        &DecodingKey::from_secret(state.jwt_secret.as_ref()),
+        &Validation::default(),
+    )
+    .map_err(|_| {
+        let json_error = Response::from_err(&String::from("Invalid token"));
+        (StatusCode::UNAUTHORIZED, Json(json_error))
+    })?
+    .claims;
+
+    let user_id = uuid::Uuid::parse_str(&claims.sub).map_err(|_| {
+        let json_error = Response::from_err(&String::from("Invalid token"));
+        (StatusCode::UNAUTHORIZED, Json(json_error))
+    })?;
+
+    let user = get_user_by_id(&user_id.to_string(), state.get_users_collection()) // todo:
+        .await
+        .map_err(|_e| {
+            let json_error = Response::from_err(&String::from("Error fetching user from database"));
+            (StatusCode::INTERNAL_SERVER_ERROR, Json(json_error))
+        })?;
+
+    let user = user.ok_or_else(|| {
+        let json_error = Response::from_err(&String::from(
+            "The user belonging to this token no longer exists",
+        ));
+        (StatusCode::UNAUTHORIZED, Json(json_error))
+    })?;
+
+    req.extensions_mut().insert(user);
     Ok(next.run(req).await)
 }
 
