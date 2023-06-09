@@ -2,6 +2,7 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
+use std::sync::Arc;
 use tracing::{debug, error};
 
 use crate::config::AppState;
@@ -11,7 +12,7 @@ use crate::meal::service as meal_service;
 
 // Returns all meals
 #[axum_macros::debug_handler]
-pub async fn get_meals_handler(State(state): State<AppState>) -> impl IntoResponse {
+pub async fn get_meals_handler(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     debug!("Getting all meals");
     match meal_service::get_all_meals(state.get_meals_collection()).await {
         Ok(meals) => (
@@ -42,7 +43,7 @@ pub async fn get_meals_handler(State(state): State<AppState>) -> impl IntoRespon
 
 #[axum_macros::debug_handler]
 pub async fn search_meals_handler(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Json(req): Json<SearchMealRequest>,
 ) -> impl IntoResponse {
     debug!("searching meal with request {:?}", req.clone());
@@ -81,7 +82,7 @@ pub async fn search_meals_handler(
 #[axum_macros::debug_handler]
 pub async fn get_meal_handler(
     Path(meal_id): Path<String>,
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     debug!("Getting meal with id {}", meal_id);
     match meal_service::get_meal_by_id(&meal_id, state.get_meals_collection()).await {
@@ -114,7 +115,7 @@ pub async fn get_meal_handler(
 
 #[axum_macros::debug_handler]
 pub async fn meal_create_handler(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Json(req): Json<CreateMealRequest>,
 ) -> impl IntoResponse {
     debug!("[meal_meal_handler] Creating meal ({:?})", req.clone());
@@ -149,7 +150,7 @@ pub async fn meal_create_handler(
 
 // Updates existing meal
 pub async fn meal_update_handler(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Json(req): Json<Meal>,
 ) -> impl IntoResponse {
     let meal_id = req.id.to_string();
@@ -186,7 +187,7 @@ pub async fn meal_update_handler(
 #[axum_macros::debug_handler]
 pub async fn meal_delete_handler(
     path: Path<String>,
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     let meal_id = path.0;
     debug!("[meal_delete_handler] Deleting meal {}", meal_id);

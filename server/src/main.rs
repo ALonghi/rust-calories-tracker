@@ -1,16 +1,17 @@
 extern crate core;
 
+use clap::Parser;
 use std::net::SocketAddr;
 use std::str::FromStr;
 
-use clap::Parser;
 use dotenv::dotenv;
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
 use crate::config::Config;
-use crate::server::app;
+use crate::server::create_app;
 
+mod auth;
 mod config;
 mod db;
 mod dto;
@@ -19,16 +20,14 @@ mod food;
 mod meal;
 mod routes;
 mod server;
+mod user;
 mod util;
 
-#[derive(Clone, Debug)]
-pub struct EnvVars {
-    mongo_uri: String,
-    app_name: String,
-}
+use crate::auth::AuthState;
+use crate::config::env::EnvVars;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> () {
     dotenv().ok();
     // Setup tracing
     let subscriber = FmtSubscriber::builder()
@@ -36,10 +35,8 @@ async fn main() {
         .finish();
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
-    let env_vars = EnvVars {
-        mongo_uri: std::env::var("MONGO_URI").expect("MONGO_URI environment variable must be set."),
-        app_name: std::env::var("APP_NAME").expect("APP_NAME environment variable must be set."),
-    };
+    let env_vars = EnvVars::init().expect("Missing environment variables");
+    let auth_state = AuthState::init(&env_vars).expect("Wrong auth configuration");
     // Parse command line arguments
     let config = Config::parse();
 
@@ -47,9 +44,11 @@ async fn main() {
     let addr = SocketAddr::from_str(format!("[::]:{}", config.port).as_str()).unwrap();
     info!("listening on {}", addr);
 
-    let app = app(&env_vars).await.unwrap();
+    let app = create_app(&env_vars, &auth_state)
+        .await
+        .expect("Error in initializing app");
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
-        .expect("server error");
+        .expect("Error in creating server");
 }

@@ -1,58 +1,33 @@
-use std::{sync::Arc, time::Duration};
+use std::sync::Arc;
 
-use axum::{
-    body::Bytes,
-    http::{header, HeaderValue},
-    Router,
-};
-use tower::ServiceBuilder;
+use axum::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
+use axum::http::Method;
+use axum::{http::HeaderValue, Router};
 
-use tower_http::trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer};
-use tower_http::{cors::CorsLayer, timeout::TimeoutLayer};
-use tower_http::{LatencyUnit, ServiceBuilderExt};
+use crate::auth::AuthState;
+use tower_http::cors::CorsLayer;
 
+use crate::config::env::EnvVars;
 use crate::config::AppState;
 use crate::db::DB;
 use crate::error::Result;
 use crate::routes::get_routes;
-use crate::EnvVars;
 
-pub async fn app(env_vars: &EnvVars) -> Result<Router> {
+pub async fn create_app(env_vars: &EnvVars, auth_state: &AuthState) -> Result<Router> {
     // Build our database for holding the key/value pairs
-    let state = AppState {
-        client: DB::init(env_vars).await?.client,
+    let state = Arc::new(AppState {
+        db_client: DB::init(env_vars).await?.client,
         app_name: env_vars.app_name.clone(),
-    };
+        auth_state: auth_state.clone(),
+        jwt_secret: env_vars.jwt_secret.clone(),
+    });
 
-    let sensitive_headers: Arc<[_]> = vec![header::AUTHORIZATION, header::COOKIE].into();
-    let cors = CorsLayer::permissive();
-
-    // Build our middleware stack
-    let middleware = ServiceBuilder::new()
-        // Mark the `Authorization` and `Cookie` headers as sensitive so it doesn't show in logs
-        .sensitive_request_headers(sensitive_headers.clone())
-        // Add high level tracing/logging to all requests
-        .layer(
-            TraceLayer::new_for_http()
-                .on_body_chunk(|chunk: &Bytes, latency: Duration, _: &tracing::Span| {
-                    tracing::trace!(size_bytes = chunk.len(), latency = ?latency, "sending body chunk")
-                })
-                .make_span_with(DefaultMakeSpan::new().include_headers(true))
-                .on_response(DefaultOnResponse::new().include_headers(true).latency_unit(LatencyUnit::Micros)),
-        )
-        .sensitive_response_headers(sensitive_headers)
-        // Set a timeout
-        .layer(TimeoutLayer::new(Duration::from_secs(10)))
-        // Box the response body so it implements `Default` which is required by axum
-        .map_response_body(axum::body::boxed)
-        // Compress responses
-        .compression()
-        // Set a `Content-Type` if there isn't one already.
-        .insert_response_header_if_not_present(
-            header::CONTENT_TYPE,
-            HeaderValue::from_static("application/json"),
-        );
+    let cors = CorsLayer::new()
+        .allow_origin("http://localhost:8000".parse::<HeaderValue>().unwrap())
+        .allow_methods([Method::GET, Method::POST, Method::PATCH, Method::DELETE])
+        .allow_credentials(true)
+        .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE]);
 
     // Build route service
-    Ok(get_routes().layer(cors).layer(middleware).with_state(state))
+    Ok(get_routes(state).layer(cors))
 }

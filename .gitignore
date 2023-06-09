@@ -1,5 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# IDE, OS, etc
+.idea
+.vscode
+.history
+.DS_Store
+*.pem
+
 # dependencies
 node_modules
 .pnp
@@ -16,11 +23,6 @@ out/
 build
 target
 
-# misc
-.DS_Store
-*.pem
-.vscode
-.idea
 
 # debug
 npm-debug.log*

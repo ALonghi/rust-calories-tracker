@@ -2,6 +2,7 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
+use std::sync::Arc;
 use tracing::{debug, error};
 
 use crate::config::AppState;
@@ -11,7 +12,7 @@ use crate::food::service as food_service;
 
 // Returns all tasks
 #[axum_macros::debug_handler]
-pub async fn get_foods_handler(State(state): State<AppState>) -> impl IntoResponse {
+pub async fn get_foods_handler(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     debug!("Getting all foods");
     match food_service::get_all_foods(state.get_foods_collection()).await {
         Ok(foods) => (
@@ -43,7 +44,7 @@ pub async fn get_foods_handler(State(state): State<AppState>) -> impl IntoRespon
 #[axum_macros::debug_handler]
 pub async fn get_food_handler(
     Path(food_id): Path<String>,
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     debug!("Getting food with id {}", food_id);
     match food_service::get_food_by_id(&food_id, state.get_foods_collection()).await {
@@ -76,7 +77,7 @@ pub async fn get_food_handler(
 
 #[axum_macros::debug_handler]
 pub async fn food_create_handler(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Json(req): Json<CreateFoodRequest>,
 ) -> impl IntoResponse {
     debug!("[task_food_handler] Creating food ({:?})", req.clone());
@@ -111,7 +112,7 @@ pub async fn food_create_handler(
 
 // Updates existing task
 pub async fn food_update_handler(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Json(req): Json<Food>,
 ) -> impl IntoResponse {
     let food_id = req.id.to_string();
@@ -148,7 +149,7 @@ pub async fn food_update_handler(
 #[axum_macros::debug_handler]
 pub async fn food_delete_handler(
     Path(food_id): Path<String>,
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     debug!("[task_delete_handler] Deleting food {}", food_id);
     match food_service::delete(&food_id, state.get_foods_collection()).await {
@@ -181,7 +182,7 @@ pub async fn food_delete_handler(
 
 #[axum_macros::debug_handler]
 pub async fn search_foods_handler(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Json(req): Json<SearchFoodRequest>,
 ) -> impl IntoResponse {
     debug!("Searching for meals with prefix {}", &req.food_prefix);

@@ -12,6 +12,23 @@ pub struct Response<T> {
     pub error_message: Option<String>,
 }
 
+impl<T> Response<T> {
+    pub fn from_data(data: T) -> Self {
+        Self {
+            success: true,
+            data: Some(data),
+            error_message: None,
+        }
+    }
+    pub fn from_err(err: &String) -> Self {
+        Self {
+            success: false,
+            data: None,
+            error_message: Some(err.to_owned()),
+        }
+    }
+}
+
 #[skip_serializing_none]
 #[derive(Deserialize, Debug, Clone)]
 pub struct CreateFoodRequest {
@@ -39,4 +56,10 @@ pub struct SearchMealRequest {
 #[derive(Deserialize, Debug, Clone)]
 pub struct SearchFoodRequest {
     pub food_prefix: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct UserCreationRequest {
+    pub email: String,
+    pub password: String,
 }

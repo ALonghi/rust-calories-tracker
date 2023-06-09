@@ -1,6 +1,5 @@
-use std::str::FromStr;
-
 use bson::Document;
+use std::str::FromStr;
 
 pub fn get_optional_uuid(doc: &Document, field_name: &str) -> Option<uuid::Uuid> {
     doc.get_str(field_name)

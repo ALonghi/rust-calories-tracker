@@ -1,8 +1,8 @@
 use mongodb::options::ClientOptions;
 use mongodb::Client;
 
+use crate::config::env::EnvVars;
 use crate::error::Result;
-use crate::EnvVars;
 
 #[derive(Clone, Debug)]
 pub struct DB {
