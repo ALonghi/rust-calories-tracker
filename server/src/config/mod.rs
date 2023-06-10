@@ -2,7 +2,7 @@ use bson::Document;
 use clap::Parser;
 use mongodb::{Client, Collection, Database};
 
-use crate::auth::AuthState;
+use crate::auth::AuthConfig;
 
 pub mod env;
 
@@ -18,8 +18,7 @@ pub struct Config {
 pub struct AppState {
     pub db_client: Client,
     pub app_name: String,
-    pub auth_state: AuthState,
-    pub jwt_secret: String,
+    pub auth_config: AuthConfig,
 }
 
 impl AppState {

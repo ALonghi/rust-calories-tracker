@@ -109,19 +109,22 @@ impl<T> From<AppError> for (StatusCode, Json<Response<T>>) {
             | AppError::MealRepo(MealRepoError::NotFound)
             | AppError::FoodRepo(FoodRepoError::NotFound) => (
                 StatusCode::NOT_FOUND,
-                Json(Response::from_err(&String::from(
+                Json(Response::<T>::from_err(&String::from(
                     "Requested resource Not found",
                 ))),
             ),
             AppError::UserRepo(UserRepoError::InvalidUser(msg))
             | AppError::MealRepo(MealRepoError::InvalidMeal(msg))
             | AppError::FoodRepo(FoodRepoError::InvalidFood(msg)) => {
-                (StatusCode::BAD_REQUEST, Json(Response::from_err(&msg)))
+                (StatusCode::BAD_REQUEST, Json(Response::<T>::from_err(&msg)))
             }
-            AppError::AuthError(msg) => (StatusCode::UNAUTHORIZED, Json(Response::from_err(&msg))),
+            AppError::AuthError(msg) => (
+                StatusCode::UNAUTHORIZED,
+                Json(Response::<T>::from_err(&msg)),
+            ),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(Response::from_err(&String::from("Unexpected error"))),
+                Json(Response::<T>::from_err(&String::from("Unexpected error"))),
             ),
         }
     }

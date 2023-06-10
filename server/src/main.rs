@@ -23,7 +23,7 @@ mod server;
 mod user;
 mod util;
 
-use crate::auth::AuthState;
+use crate::auth::AuthConfig;
 use crate::config::env::EnvVars;
 
 #[tokio::main]
@@ -36,7 +36,7 @@ async fn main() -> () {
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
     let env_vars = EnvVars::init().expect("Missing environment variables");
-    let auth_state = AuthState::init(&env_vars).expect("Wrong auth configuration");
+    let auth_config = AuthConfig::init(&env_vars).expect("Wrong auth configuration");
     // Parse command line arguments
     let config = Config::parse();
 
@@ -44,7 +44,7 @@ async fn main() -> () {
     let addr = SocketAddr::from_str(format!("[::]:{}", config.port).as_str()).unwrap();
     info!("listening on {}", addr);
 
-    let app = create_app(&env_vars, &auth_state)
+    let app = create_app(&env_vars, &auth_config)
         .await
         .expect("Error in initializing app");
     axum::Server::bind(&addr)

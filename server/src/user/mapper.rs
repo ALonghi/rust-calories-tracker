@@ -25,7 +25,7 @@ pub fn doc_to_user(doc: &bson::document::Document) -> Result<User> {
     let name = doc.get_str("name")?;
     let email = doc.get_str("email")?;
     let password = doc.get_str("password")?;
-    let role = doc.get_str("role")?;
+    let roles = doc.get_array("roles")?;
     let verified = doc.get_bool("verified")?;
     let created_at = bson::DateTime::from_ref(doc.get_datetime("created_at")?);
     let updated_at = doc
@@ -38,7 +38,7 @@ pub fn doc_to_user(doc: &bson::document::Document) -> Result<User> {
             name: String::from(name),
             email: String::from(email),
             password: String::from(password),
-            role: String::from(role),
+            roles: roles.to_vec().into_iter().map(|u| u.to_string()).collect(),
             verified,
             created_at: chrono::DateTime::from(created_at),
             updated_at,
@@ -56,7 +56,7 @@ pub fn user_to_doc(user: &User) -> bson::document::Document {
         "name" : user.name.clone(),
         "email" : user.email.clone(),
         "password" : user.password.clone(),
-        "role" : user.role.clone(),
+        "roles" : user.roles.clone(),
         "verified" : user.verified.clone(),
         "created_at" : <chrono::DateTime<Utc> as Into<bson::DateTime>>::into(user.created_at),
         "updated_at" : user.updated_at.map(|v| <chrono::DateTime<Utc> as Into<bson::DateTime>>::into(v)).clone()

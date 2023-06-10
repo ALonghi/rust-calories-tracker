@@ -10,13 +10,15 @@ pub mod service;
 pub mod utils;
 
 #[derive(Clone, Debug)]
-pub struct AuthState {
+pub struct AuthConfig {
     pub client: BasicClient,
     pub base_url: String,
     pub audience: String,
+    pub jwt_secret: String,
+    pub token_age_seconds: i64,
 }
 
-impl AuthState {
+impl AuthConfig {
     pub fn init(env_vars: &EnvVars) -> Result<Self> {
         // OAuth2 configuration
         let client_id = ClientId::new(env_vars.auth_client_id.to_string());
@@ -37,6 +39,8 @@ impl AuthState {
             client,
             base_url: auth_base_url,
             audience,
+            jwt_secret: env_vars.jwt_secret.to_string(),
+            token_age_seconds: env_vars.token_age_ms,
         })
     }
 }

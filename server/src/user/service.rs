@@ -6,14 +6,14 @@ use crate::error::{AppError, Result, UserRepoError};
 use crate::user::mapper::{doc_to_user, user_to_doc};
 use crate::user::model::User;
 
-pub async fn create(food: &User, collection: Collection<Document>) -> Result<&User> {
-    debug!("[create_food] Creating user with id={}", &food.id);
-    let doc = user_to_doc(food);
+pub async fn create_user(user: &User, collection: Collection<Document>) -> Result<&User> {
+    debug!("[create_user] Creating user with id={}", &user.id);
+    let doc = user_to_doc(user);
     collection.insert_one(doc, None).await.map_err(|_e| {
-        error!("ERROR [create_food] {:?}", _e);
+        error!("ERROR [create_user] {:?}", _e);
         return UserRepoError::InvalidUser(_e.to_string());
     })?;
-    Ok(food)
+    Ok(user)
 }
 
 pub async fn get_user_by_id(
