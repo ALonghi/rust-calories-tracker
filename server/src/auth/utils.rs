@@ -3,12 +3,12 @@ use axum::response::{IntoResponse, Response};
 use axum::Json;
 use axum_extra::extract::cookie::Cookie;
 use jsonwebtoken::{encode, EncodingKey, Header};
-use serde::Serialize;
 
 use uuid::Uuid;
 
 use crate::auth::model::TokenClaims;
 use crate::auth::AuthConfig;
+use crate::dto::{AuthData, LoginResponse};
 use crate::error::AppError::AuthError;
 use crate::error::Result;
 use crate::user::model::{FilteredUser, User};
@@ -42,34 +42,15 @@ pub fn get_response_with_token(auth_config: &AuthConfig, user: &User) -> Result<
         .http_only(true)
         .finish();
 
-    #[derive(Clone, Serialize, Debug)]
-    pub struct AuthData {
-        token: String,
-        user: FilteredUser,
-    }
-    #[derive(Clone, Serialize, Debug)]
-    pub struct MyLoginRes {
-        data: AuthData,
-        success: bool,
-    }
-    let mut response =
-        // axum::http::Response::new(
-        Json(MyLoginRes {
-            data: AuthData {
-                token,
-                user: FilteredUser::from_user(user.to_owned())
-            },
-            success: true,
-        }).into_response();
-    // json!({
-    //     "data": {
-    //         "token": token,
-    //         "user": FilteredUser::from_user(user.to_owned())
-    //     },
-    //     "success": "true"
-    // })
-    // .to_string(),
-    // );
+    let mut response = Json(LoginResponse {
+        data: AuthData {
+            token,
+            user: FilteredUser::from_user(user.to_owned()),
+        },
+        success: true,
+    })
+    .into_response();
+
     response.headers_mut().insert(
         header::SET_COOKIE,
         cookies

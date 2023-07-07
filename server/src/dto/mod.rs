@@ -3,6 +3,7 @@ use serde_with::skip_serializing_none;
 
 use crate::food::model::{Food, NutritionalValue};
 use crate::meal::model::MealType;
+use crate::user::model::FilteredUser;
 
 #[skip_serializing_none]
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -62,4 +63,15 @@ pub struct SearchFoodRequest {
 pub struct UserCreationRequest {
     pub email: String,
     pub password: String,
+}
+
+#[derive(Clone, Serialize, Debug)]
+pub struct AuthData {
+    pub token: String,
+    pub user: FilteredUser,
+}
+#[derive(Clone, Serialize, Debug)]
+pub struct LoginResponse {
+    pub data: AuthData,
+    pub success: bool,
 }
