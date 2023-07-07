@@ -33,7 +33,7 @@ impl User {
 }
 
 #[allow(non_snake_case)]
-#[derive(Debug, Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct FilteredUser {
     pub id: String,
     pub name: String,

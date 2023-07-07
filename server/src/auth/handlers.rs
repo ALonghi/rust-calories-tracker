@@ -123,7 +123,7 @@ pub async fn login_user_handler(
             )),
         ));
     }
-    Ok(get_response_with_token(&state.auth_config, &user.id)?)
+    Ok(get_response_with_token(&state.auth_config, &user).expect("Error in generating token"))
 }
 
 pub async fn register_user_handler(

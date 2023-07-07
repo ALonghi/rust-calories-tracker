@@ -1,15 +1,17 @@
-use crate::auth::AuthConfig;
 use axum::http::header;
-
+use axum::response::{IntoResponse, Response};
+use axum::Json;
 use axum_extra::extract::cookie::Cookie;
 use jsonwebtoken::{encode, EncodingKey, Header};
-use serde_json::json;
+use serde::Serialize;
+
 use uuid::Uuid;
 
 use crate::auth::model::TokenClaims;
-
+use crate::auth::AuthConfig;
 use crate::error::AppError::AuthError;
 use crate::error::Result;
+use crate::user::model::{FilteredUser, User};
 
 pub fn create_jwt_token(auth_config: &AuthConfig, user_id: &Uuid) -> Result<String> {
     let now = chrono::Utc::now();
@@ -31,11 +33,8 @@ pub fn create_jwt_token(auth_config: &AuthConfig, user_id: &Uuid) -> Result<Stri
         .map_err(|e| AuthError(format!("Error in creating auth token: {}", e)))
 }
 
-pub fn get_response_with_token(
-    auth_config: &AuthConfig,
-    user_id: &Uuid,
-) -> Result<axum::http::Response<String>> {
-    let token = create_jwt_token(auth_config, &user_id).expect("Error in creating jwt token");
+pub fn get_response_with_token(auth_config: &AuthConfig, user: &User) -> Result<Response> {
+    let token = create_jwt_token(auth_config, &user.id).expect("Error in creating jwt token");
     let cookies = Cookie::build("token", token.clone())
         .path("/")
         .max_age(time::Duration::seconds(auth_config.token_age_seconds))
@@ -43,13 +42,34 @@ pub fn get_response_with_token(
         .http_only(true)
         .finish();
 
-    let mut response = axum::http::Response::new(
-        json!({
-            "data": token.clone(),
-            "success": "true"
-        })
-        .to_string(),
-    );
+    #[derive(Clone, Serialize, Debug)]
+    pub struct AuthData {
+        token: String,
+        user: FilteredUser,
+    }
+    #[derive(Clone, Serialize, Debug)]
+    pub struct MyLoginRes {
+        data: AuthData,
+        success: bool,
+    }
+    let mut response =
+        // axum::http::Response::new(
+        Json(MyLoginRes {
+            data: AuthData {
+                token,
+                user: FilteredUser::from_user(user.to_owned())
+            },
+            success: true,
+        }).into_response();
+    // json!({
+    //     "data": {
+    //         "token": token,
+    //         "user": FilteredUser::from_user(user.to_owned())
+    //     },
+    //     "success": "true"
+    // })
+    // .to_string(),
+    // );
     response.headers_mut().insert(
         header::SET_COOKIE,
         cookies
