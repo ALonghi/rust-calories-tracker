@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
   Bars3BottomLeftIcon,
   ListBulletIcon,
+  ReceiptPercentIcon,
   RectangleGroupIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -75,10 +76,8 @@ export default function Sidebar() {
                   </div>
                 </Transition.Child>
                 <div className="flex flex-shrink-0 items-center px-4">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=white"
-                    alt="Logo"
+                  <ReceiptPercentIcon
+                    className="h-6 w-auto text-white"
                   />
                   <p className="text-white ml-4 ">Calories Tracker</p>
                 </div>
@@ -128,10 +127,8 @@ export default function Sidebar() {
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex flex-grow flex-col overflow-y-auto bg-themebg-500 pt-5">
           <div className="flex flex-shrink-0 items-center px-4">
-            <img
-              className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=white"
-              alt="Logo"
+            <ReceiptPercentIcon
+              className="h-6 w-auto text-white"
             />
             <p className="text-white ml-4 ">Calories Tracker</p>
           </div>
