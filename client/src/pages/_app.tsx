@@ -1,32 +1,35 @@
 import "@styles/global.scss";
-import type { AppProps } from "next/app";
+import type {AppProps} from "next/app";
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React from "react";
 import Notifications from "@components/shared/Notifications/Notifications";
 import Sidebar from "@components/shared/Sidebar";
-import { useRouter } from "next/router";
+import {CookiesProvider} from "react-cookie";
+import {SessionProvider, useSession} from "next-auth/react";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-  useEffect(() => {
-    if (false) router.replace(`/login`); //fix with auth check
-  }, []);
-  return (
-    <>
-      <Head>
-        <title>Calories tracker</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="shortcut icon" href="favicon.ico" />
-      </Head>
-      <div className="flex flex-row relative ">
-        <Sidebar />
-        <Notifications />
-        <div className="w-full mx-auto min-h-[100vh]">
-          <Component {...pageProps} />
-        </div>
-      </div>
-    </>
-  );
+function MyApp({Component, pageProps: {session, ...pageProps},}: AppProps) {
+    console.log(`# session: ${session}`)
+
+    return (
+        <>
+            <SessionProvider>
+                <CookiesProvider>
+                    <Head>
+                        <title>Calories tracker</title>
+                        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                        <link rel="shortcut icon" href="favicon.ico"/>
+                    </Head>
+                    <div className="flex flex-row relative ">
+                        <Sidebar/>
+                        <Notifications/>
+                        <div className="w-full mx-auto min-h-[100vh]">
+                            <Component {...pageProps} />
+                        </div>
+                    </div>
+                </CookiesProvider>
+            </SessionProvider>
+        </>
+    );
 }
 
 export default MyApp;

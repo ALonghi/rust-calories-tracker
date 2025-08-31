@@ -12,7 +12,9 @@ pub struct EnvVars {
     pub auth_base_url: String,
     pub auth_audience_url: String,
     pub jwt_secret: String,
-    pub token_age_ms: i64,
+    pub token_age_seconds: i64,
+    pub refresh_jwt_secret: String,
+    pub refresh_token_age_seconds: i64,
 }
 
 impl EnvVars {
@@ -33,10 +35,15 @@ impl EnvVars {
             auth_audience_url: std::env::var("AUTH_AUDIENCE_URL")
                 .expect("Missing AUTH_AUDIENCE_URL!"),
             jwt_secret: std::env::var("JWT_SECRET").expect("Missing JWT_SECRET!"),
-            token_age_ms: std::env::var("TOKEN_AGE_SECONDS")
+            token_age_seconds: std::env::var("TOKEN_AGE_SECONDS")
                 .expect("Missing TOKEN_AGE_SECONDS!")
                 .parse()
                 .expect("TOKEN_AGE_SECONDS must be a numerical value"),
+            refresh_jwt_secret: std::env::var("REFRESH_JWT_SECRET").expect("Missing REFRESH_JWT_SECRET!"),
+            refresh_token_age_seconds: std::env::var("REFRESH_TOKEN_AGE_SECONDS")
+                .expect("Missing REFRESH_TOKEN_AGE_SECONDS!")
+                .parse()
+                .expect("REFRESH_TOKEN_AGE_SECONDS must be a numerical value"),
         })
     }
 }

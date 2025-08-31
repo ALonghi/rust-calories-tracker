@@ -16,6 +16,8 @@ pub struct AuthConfig {
     pub audience: String,
     pub jwt_secret: String,
     pub token_age_seconds: i64,
+    pub refresh_jwt_secret: String,
+    pub refresh_token_age_seconds: i64,
 }
 
 impl AuthConfig {
@@ -40,7 +42,9 @@ impl AuthConfig {
             base_url: auth_base_url,
             audience,
             jwt_secret: env_vars.jwt_secret.to_string(),
-            token_age_seconds: env_vars.token_age_ms,
+            token_age_seconds: env_vars.token_age_seconds,
+            refresh_jwt_secret: env_vars.refresh_jwt_secret.to_string(),
+            refresh_token_age_seconds: env_vars.refresh_token_age_seconds,
         })
     }
 }

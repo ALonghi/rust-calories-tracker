@@ -44,6 +44,9 @@ const LoginPage: NextPage = () => {
         );
       else setInvalidFields((p) => p.filter((e) => e !== `confirmPassword`));
     }
+
+
+
     setIsLoading(false);
   };
 

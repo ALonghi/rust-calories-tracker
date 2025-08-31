@@ -1,14 +1,14 @@
-import { instance as axios } from "../utils/axios";
 import Logger from "../utils/logging";
 import { ApiResponse, CreateMealRequest } from "@model/dto";
 import Meal from "@model/meal";
 import DateUtils from "@utils/dateUtils";
+import useAxiosAuth from "@hooks/useAxiosAuth";
 
 export default class MealService {
   static async createMeal(meal: CreateMealRequest): Promise<Meal> {
     try {
       Logger.info(`Adding meal ${JSON.stringify(meal)}`);
-      const response = (await axios
+      const response = (await useAxiosAuth()
         .post("/meals", meal)
         .then((res) => res.data)) as ApiResponse<Meal>;
       if (!response.success || !response.data)
@@ -28,7 +28,7 @@ export default class MealService {
   static async getMeals(): Promise<Meal[]> {
     try {
       Logger.info(`Getting meals..`);
-      const response = (await axios
+      const response = (await useAxiosAuth()
         .get("/meals")
         .then((res) => res.data)) as ApiResponse<Meal[]>;
       if (!response.success || !response.data)
@@ -121,7 +121,7 @@ export default class MealService {
       //   },
       // ]) satisfies Promise<Meal[]>;
       Logger.info(`Getting meals for date ..`);
-      const response = (await axios
+      const response = (await useAxiosAuth()
         .post(`/meals/search`, { meal_date: DateUtils.getDateString(date) })
         .then((res) => res.data)) as ApiResponse<Meal[]>;
       if (!response.success || !response.data)
@@ -136,7 +136,7 @@ export default class MealService {
   static async updateMeal(meal: Meal): Promise<Meal> {
     try {
       Logger.info(`Updating meal ${meal.id}  with ${JSON.stringify(meal)}`);
-      const response = (await axios
+      const response = (await useAxiosAuth()
         .put(`/meals`, meal)
         .then((res) => res.data)) as ApiResponse<Meal>;
       if (!response.success || !response.data)

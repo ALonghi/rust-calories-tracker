@@ -13,7 +13,7 @@ use axum::{
 use axum_extra::extract::cookie::CookieJar;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 
-use crate::auth::model::{LoginUserSchema, RegisterUserSchema, TokenClaims};
+use crate::auth::model::{LoginUserSchema, RefreshTokenRequest, RegisterUserSchema, TokenClaims};
 use crate::auth::service::search_by_email;
 use crate::auth::utils::get_response_with_token;
 use crate::config::AppState;
@@ -94,6 +94,44 @@ pub async fn login_user_handler(
     Json(body): Json<LoginUserSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<Response<String>>)> {
     let user = search_by_email(&body.email, state.get_users_collection())
+        .await
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(Response::<String>::from_err(&e.to_string())),
+            )
+        })?
+        .ok_or_else(|| {
+            (
+                StatusCode::NOT_FOUND,
+                Json(Response::<String>::from_err(
+                    &"Invalid email or password".to_string(),
+                )),
+            )
+        })?;
+    let is_valid = match PasswordHash::new(&user.password) {
+        Ok(parsed_hash) => Argon2::default()
+            .verify_password(body.password.as_bytes(), &parsed_hash)
+            .map_or(false, |_| true),
+        Err(_) => false,
+    };
+    if !is_valid {
+        return Err((
+            StatusCode::UNAUTHORIZED,
+            Json(Response::<String>::from_err(
+                &"Invalid email or password".to_string(),
+            )),
+        ));
+    }
+    Ok(get_response_with_token(&state.auth_config, &user).expect("Error in generating token"))
+}
+
+
+pub async fn refresh_token_handler(
+    State(state): State<Arc<AppState>>,
+    Json(body): Json<RefreshTokenRequest>,
+) -> Result<impl IntoResponse, (StatusCode, Json<Response<String>>)> {
+    let user = verify()
         .await
         .map_err(|e| {
             (

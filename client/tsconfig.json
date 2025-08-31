@@ -21,7 +21,9 @@
       "@model/*": ["model/*"],
       "@stores/*": ["stores/*"],
       "@service/*": ["service/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@pages/*": ["page/*"],
+      "@lib/*": ["lib/*"]
     },
     "incremental": true,
     "plugins": [

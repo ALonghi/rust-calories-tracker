@@ -68,6 +68,9 @@ pub struct UserCreationRequest {
 #[derive(Clone, Serialize, Debug)]
 pub struct AuthData {
     pub token: String,
+    pub expires_in_seconds: i64,
+    pub refresh_token: String,
+    pub refresh_expires_in_seconds: i64,
     pub user: FilteredUser,
 }
 #[derive(Clone, Serialize, Debug)]

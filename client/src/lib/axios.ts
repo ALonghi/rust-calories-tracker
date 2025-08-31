@@ -1,9 +1,13 @@
 import axios from "axios";
 
-export const instance = axios.create({
+export default axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 20000,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
+});
+
+export const axiosAuth = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  timeout: 20000,
+  headers: { "Content-Type": "application/json" },
 });

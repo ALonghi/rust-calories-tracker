@@ -1,4 +1,4 @@
-import { instance as axios } from "../utils/axios";
+import { axiosAuth } from "@lib/axios";
 import Logger from "../utils/logging";
 import { ApiResponse, CreateFoodRequest, SearchFoodRequest } from "@model/dto";
 import Food from "@model/food";
@@ -7,7 +7,7 @@ export default class FoodService {
   static async createFood(food: CreateFoodRequest): Promise<Food> {
     try {
       Logger.info(`Adding meal ${JSON.stringify(food)}`);
-      const response = (await axios
+      const response = (await axiosAuth
         .post("/foods", food)
         .then((res) => res.data)) as ApiResponse<Food>;
       if (!response.success || !response.data)
@@ -27,7 +27,7 @@ export default class FoodService {
   static async getAll(): Promise<Food[]> {
     try {
       Logger.info(`Getting all foods..`);
-      const response = (await axios
+      const response = (await axiosAuth
         .get(`/foods`)
         .then((res) => res.data)) as ApiResponse<Food[]>;
       if (!response.success || !response.data)
@@ -45,7 +45,7 @@ export default class FoodService {
   static async searchFoodByPrefix(prefix: string): Promise<Food[]> {
     try {
       Logger.info(`Searching foods by prefix ${prefix}..`);
-      const response = (await axios
+      const response = (await axiosAuth
         .post(`/foods/search`, {
           food_prefix: prefix,
         } satisfies SearchFoodRequest)
